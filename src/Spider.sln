@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Phone
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spider", "Spider\Spider\Spider.csproj", "{29148556-C079-47D9-8E0B-B1C023F17CF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiderContent", "Spider\SpiderContent\SpiderContent.contentproj", "{C9E4AD72-90FB-4F73-8B73-71396B5BAF63}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://wavecrash.visualstudio.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Spider\\Spider\\Spider.csproj
+		SccProjectName1 = Spider/Spider
+		SccLocalPath1 = Spider\\Spider
+		SccProjectUniqueName2 = Spider\\SpiderContent\\SpiderContent.contentproj
+		SccProjectName2 = Spider/SpiderContent
+		SccLocalPath2 = Spider\\SpiderContent
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Windows Phone = Debug|Windows Phone
+		Release|Windows Phone = Release|Windows Phone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29148556-C079-47D9-8E0B-B1C023F17CF0}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{29148556-C079-47D9-8E0B-B1C023F17CF0}.Debug|Windows Phone.Build.0 = Debug|Windows Phone
+		{29148556-C079-47D9-8E0B-B1C023F17CF0}.Debug|Windows Phone.Deploy.0 = Debug|Windows Phone
+		{29148556-C079-47D9-8E0B-B1C023F17CF0}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+		{29148556-C079-47D9-8E0B-B1C023F17CF0}.Release|Windows Phone.Build.0 = Release|Windows Phone
+		{29148556-C079-47D9-8E0B-B1C023F17CF0}.Release|Windows Phone.Deploy.0 = Release|Windows Phone
+		{C9E4AD72-90FB-4F73-8B73-71396B5BAF63}.Debug|Windows Phone.ActiveCfg = Debug|Windows Phone
+		{C9E4AD72-90FB-4F73-8B73-71396B5BAF63}.Release|Windows Phone.ActiveCfg = Release|Windows Phone
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
