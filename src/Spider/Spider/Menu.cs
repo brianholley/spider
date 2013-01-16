@@ -246,7 +246,14 @@ namespace Spider
                     batch.DrawString(menuBackgroundFont, Strings.AppName, offset, new Color(32, 32, 32), 0.0f, Vector2.Zero, scale, SpriteEffects.None, 1);
                 }
 
-                batch.Draw(spiderCardTex, spiderCardBounds, Color.White);
+                if (spiderCardTex != null)
+                {
+                    batch.Draw(spiderCardTex, spiderCardBounds, Color.White);
+                }
+                else
+                {
+                    // This is bad, but we're seeing crashes in the wild that look like they're hitting this
+                }
 
                 foreach (MenuButton button in buttons)
                 {

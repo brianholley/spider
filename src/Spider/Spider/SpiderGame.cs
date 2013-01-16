@@ -29,6 +29,12 @@ namespace Spider
 
             // Frame rate is 30 fps by default for Windows Phone.
             TargetElapsedTime = TimeSpan.FromTicks(333333);
+
+            PhoneApplicationService appService = PhoneApplicationService.Current;
+            appService.Launching += OnAppServiceLaunching;
+            appService.Activated += OnAppServiceActivated;
+            appService.Deactivated += OnAppServiceDeactivated;
+            appService.Closing += OnAppServiceClosing;
         }
 
         /// <summary>
@@ -54,11 +60,6 @@ namespace Spider
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            //Menu.LoadContent(this.Content);
-            //CardResources.LoadResources(GraphicsDevice, this.Content);
-
-            //GameStateManager.ChangeGameState(GameState.Menu);
         }
 
         /// <summary>
@@ -68,16 +69,45 @@ namespace Spider
         protected override void UnloadContent()
         {
         }
+        
+        void OnAppServiceLaunching(object sender, LaunchingEventArgs args)
+        {
+            LoadOnActivated();
+        }
 
-        protected override void OnActivated(object sender, EventArgs args)
+        void OnAppServiceActivated(object sender, ActivatedEventArgs args)
+        {
+            if (!args.IsApplicationInstancePreserved)
+                LoadOnActivated();
+        }
+        
+        void OnAppServiceDeactivated(object sender, DeactivatedEventArgs args)
+        {
+            GameStateManager.CurrentState.Save();
+            if (GameStateManager.CurrentState.State() != GameState.Loading)
+            {
+                PhoneApplicationService.Current.State["GameState"] = GameStateManager.CurrentState.State();
+            }
+        }
+
+        void OnAppServiceClosing(object sender, ClosingEventArgs args)
+        {
+            GameStateManager.CurrentState.Save();
+        }
+
+        protected void LoadOnActivated()
         {
             LoadGameState loadState = GameStateManager.CurrentState as LoadGameState;
             if (loadState != null)
             {
                 try
                 {
-                    if (PhoneApplicationService.Current.State.ContainsKey("GameState"))
+                    if (PhoneApplicationService.Current != null && // wtf
+                        PhoneApplicationService.Current.State != null && // wtf2
+                        PhoneApplicationService.Current.State.ContainsKey("GameState"))
+                    {
                         loadState.SetResuming((GameState)PhoneApplicationService.Current.State["GameState"]);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -92,24 +122,6 @@ namespace Spider
             GameStateManager.RefreshTrialStatus();
         }
 
-        protected override void OnDeactivated(object sender, EventArgs args)
-        {
-            if (GameStateManager.CurrentState.State() != GameState.Loading)
-            {
-                PhoneApplicationService.Current.State["GameState"] = GameStateManager.CurrentState.State();
-            }
-        }
-
-        /// <summary>
-        /// Exiting the app
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        protected override void OnExiting(object sender, EventArgs args)
-        {
-            GameStateManager.CurrentState.Save();
-        }
-
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -117,10 +129,6 @@ namespace Spider
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-            //    this.Exit();
-
             GameStateManager.CurrentState.Update(this);
 
             base.Update(gameTime);

@@ -96,9 +96,12 @@ namespace Spider
         {
             int spacing = (viewRect.Width - cardSize.X * Board.StackCount) / (Board.StackCount - 1);
             int index = pt.X / (cardSize.X + spacing);
-            Rectangle stackArea = GetAreaOfStack(board.GetStack(index));
-            if (stackArea.Contains(pt))
-                return board.GetStack(index);
+            if (index >= 0 && index < Board.StackCount)
+            {
+                Rectangle stackArea = GetAreaOfStack(board.GetStack(index));
+                if (stackArea.Contains(pt))
+                    return board.GetStack(index);
+            }
             return null;
         }
 
