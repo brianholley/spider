@@ -83,8 +83,6 @@ namespace Spider
         {
             splashFont = GameStateManager.Content.Load<SpriteFont>("SplashScreenFont");
             
-            //ResourceManager strings = new ResourceManager("Spider.Strings", System.Reflection.Assembly.GetExecutingAssembly());
-            //loadingText = strings.GetString("Loading");
             loadingText = Strings.Loading;
             Vector2 size = splashFont.MeasureString(loadingText);
             loadingTextSize = new Point((int)size.X, (int)size.Y);
@@ -102,7 +100,7 @@ namespace Spider
 
             contentTotal += Menu.ContentCount();
             contentTotal += CardResources.ContentCount();
-            contentTotal += TrialWindow.ContentCount();
+            contentTotal += MessageWindow.ContentCount();
 
             nextGameState = GameState.Menu;
 
@@ -112,8 +110,6 @@ namespace Spider
 
         public void SetResuming(GameState resumeState)
         {
-            //ResourceManager strings = new ResourceManager("Spider.Strings", System.Reflection.Assembly.GetExecutingAssembly());
-            //loadingText = strings.GetString("Resuming");
             loadingText = Strings.Resuming;
             Vector2 size = splashFont.MeasureString(loadingText);
             loadingTextSize = new Point((int)size.X, (int)size.Y);
@@ -135,7 +131,6 @@ namespace Spider
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
             spriteBatch.DrawString(splashFont, loadingText, new Vector2((GameStateManager.ViewRect.Width - loadingTextSize.X) / 2, GameStateManager.ViewRect.Height / 4 - loadingTextSize.Y), Color.White);
 
-            //Rectangle progressRect = new Rectangle((GameStateManager.ViewRect.Width - loadingTextSize.X) / 2, GameStateManager.ViewRect.Height * 3 / 4, loadingTextSize.X, loadingTextSize.Y / 4);
             Rectangle progressRect = new Rectangle(GameStateManager.ViewRect.Width / 4, GameStateManager.ViewRect.Height * 3 / 4, GameStateManager.ViewRect.Width / 2, GameStateManager.ViewRect.Height / 24);
             spriteBatch.Draw(progressBarTex, progressRect, progressBarTex.Bounds, new Color(96, 96, 96));
 
@@ -170,7 +165,7 @@ namespace Spider
                 obj.ToString();
             }
 
-            TrialWindow.LoadContent(GameStateManager.Content, this.OnContentPieceLoaded);
+            MessageWindow.LoadContent(GameStateManager.Content, this.OnContentPieceLoaded);
             if (contentLoaded != contentTotal)
             {
                 object obj = null;

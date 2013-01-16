@@ -64,10 +64,7 @@ namespace Spider
 		        cardDealt.Reveal();
                 cardDealt.View.Animating = true;
 		
-		        int stackSize = board.GetStack(i).Count;
-                int stackDelta = board.View.GetStackDeltaForStack(board.GetStack(i));
-                Point destPoint = new Point(i * (cardSize.X + spacing), stackSize * stackDelta);
-
+                Point destPoint = board.View.GetLocationOfCardInStack(board.GetStack(i), board.GetStack(i).Count);
                 CardAnimationView animation = new CardAnimationView(cardDealt, i * delay, duration, startPoint, destPoint, cardSize.X, cardSize.Y);
                 cardAnimations.Insert(0, animation);
 	        }
@@ -276,16 +273,13 @@ namespace Spider
             Point cardSize = board.View.GetCardSize();
 	        int stackSize = board.GetStack(stack).Count;
 
-	        int spacing = (bounds.Width - cardSize.X * Board.StackCount) / (Board.StackCount - 1);
-            int stackDelta = board.View.GetStackDeltaForStack(board.GetStack(stack));
-
-            cardAnimations = new List<CardAnimationView>(13);
+	        cardAnimations = new List<CardAnimationView>(13);
 	        for (int i=0; i < 13; i++)
 	        {
 		        int pos = stackSize - 13 + i;
                 Card card = board.GetStack(stack).GetCard(pos);
                 card.View.Animating = true;
-                Point startPoint = new Point(stack * (cardSize.X + spacing), pos * stackDelta);
+                Point startPoint = board.View.GetLocationOfCardInStack(board.GetStack(stack), pos);
 
                 CardAnimationView animation = new CardAnimationView(card, (13 - i) * delay, duration, startPoint, destPoint, cardSize.X, cardSize.Y);
                 cardAnimations.Add(animation);

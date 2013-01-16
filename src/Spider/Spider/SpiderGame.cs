@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Phone.Shell;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -74,8 +74,16 @@ namespace Spider
             LoadGameState loadState = GameStateManager.CurrentState as LoadGameState;
             if (loadState != null)
             {
-                if (Microsoft.Phone.Shell.PhoneApplicationService.Current.State.ContainsKey("GameState"))
-                    loadState.SetResuming((GameState)Microsoft.Phone.Shell.PhoneApplicationService.Current.State["GameState"]);
+                try
+                {
+                    if (PhoneApplicationService.Current.State.ContainsKey("GameState"))
+                        loadState.SetResuming((GameState)PhoneApplicationService.Current.State["GameState"]);
+                }
+                catch (Exception e)
+                {
+                    // Note: Suspect if the app deactives/resumes quickly we can hit here with an InvalidOperationException
+                    System.Console.Error.WriteLine("Resuming state threw exception: " + e);
+                }
             }
 
 #if DEBUG
@@ -88,7 +96,7 @@ namespace Spider
         {
             if (GameStateManager.CurrentState.State() != GameState.Loading)
             {
-                Microsoft.Phone.Shell.PhoneApplicationService.Current.State["GameState"] = GameStateManager.CurrentState.State();
+                PhoneApplicationService.Current.State["GameState"] = GameStateManager.CurrentState.State();
             }
         }
 

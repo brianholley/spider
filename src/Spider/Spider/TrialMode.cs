@@ -11,78 +11,47 @@ namespace Spider
 {
     class TrialMode
     {
-        public const int TrialGamesLimit = 10;
-
-        public static void LaunchMarketplace()
+        public static bool LaunchMarketplace()
         {
-            Microsoft.Xna.Framework.GamerServices.Guide.ShowMarketplace(PlayerIndex.One);
+            try
+            {
+                Microsoft.Xna.Framework.GamerServices.Guide.ShowMarketplace(PlayerIndex.One);
+                return true;
+            }
+            catch (Exception e)
+            {
+                System.Console.Error.WriteLine("ShowMarketplace resulted in exception: " + e);
+                return false;
+            }
         }
     }
 
-    class TrialWindow
+    class TrialWindow : MessageWindow
     {
-        private static Texture2D backgroundTex;
-        private static SpriteFont font;
-        
-        public static int ContentCount() { return 2; }
-        public static void LoadContent(ContentManager content, ContentLoadNotificationDelegate callback)
+        bool launchSuccessful = true;
+
+        public TrialWindow(Rectangle viewRect, string text) : base(viewRect, text)
         {
-            backgroundTex = content.Load<Texture2D>(@"Menu\TrialMessage");
-            callback();
-            font = content.Load<SpriteFont>(@"Menu\TrialFont");
-            callback();
+            ClickDelegate = OnClick;
         }
 
-        Rectangle viewRect;
-        Rectangle windowRect;
-        Vector2 textPos;
-        string windowText;
-
-        public TrialWindow(Rectangle viewRect, string text)
+        public override bool Update()
         {
-            this.viewRect = viewRect;
-            windowText = text;
-
-            Vector2 textSize = font.MeasureString(windowText);
-            textPos = new Vector2((viewRect.Width - textSize.X) / 2, (viewRect.Height - textSize.Y) / 2);
-
-            int xPadding = (int)(textSize.X * 0.15);
-            int yPadding = (int)(textSize.Y * 0.15);
-            windowRect = new Rectangle(
-                (int)textPos.X - xPadding,
-                (int)textPos.Y - yPadding,
-                (int)textSize.X + xPadding * 2,
-                (int)textSize.Y + yPadding * 2);
-        }
-
-        public bool Update()
-        {
-            foreach (TouchLocation touchLoc in TouchPanel.GetState())
+            bool launchPrev = launchSuccessful;
+            bool update = base.Update();
+            if (!update && !launchSuccessful && launchPrev)
             {
-                Point pt = new Point((int)touchLoc.Position.X, (int)touchLoc.Position.Y);
-                if (touchLoc.State == TouchLocationState.Released)
-                {
-                    if (windowRect.Contains(pt))
-                    {
-                        TrialMode.LaunchMarketplace();
-                        return false;
-                    }
-                }
+                SetText(Strings.Menu_TrialNavFailed);
+                return true;
             }
-            return true;
+            return update;
         }
-
-        public void Render(Rectangle rect, SpriteBatch batch)
+        
+        public void OnClick()
         {
-            Color overlayColor = Color.Multiply(Color.Black, 0.8f);
-
-            batch.Begin();
-
-            batch.Draw(CardResources.BlankTex, viewRect, overlayColor);
-            batch.Draw(backgroundTex, windowRect, Color.White);
-            batch.DrawString(font, windowText, textPos, Color.White);
-            
-            batch.End();
+            if (launchSuccessful)
+                launchSuccessful = TrialMode.LaunchMarketplace();
         }
+
     }
 }

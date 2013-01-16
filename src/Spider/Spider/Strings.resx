@@ -178,16 +178,17 @@ to the Marketplace.</value>
     <value>Trial Version</value>
     <comment>Menu - label for the trial banner in the corner</comment>
   </data>
-  <data name="Menu_TrialGameCountReached" xml:space="preserve">
-    <value>You have reached the limit
-for this trial.  Touch
-here to go to the
-Marketplace to upgrade.</value>
-    <comment>Menu - message for once the user has reached the limit of games in trial mode</comment>
+  <data name="Menu_TrialBannerNav" xml:space="preserve">
+    <value>Click here to go to the
+Marketplace to upgrade
+to the full version of Spider.</value>
+    <comment>Menu - trial window message when clicking on the trial banner</comment>
   </data>
-  <data name="Menu_TrialGamesRemaining" xml:space="preserve">
-    <value>{0} Games Remaining</value>
-    <comment>Menu - label for games remaining ({0} formatting placeholder)</comment>
+  <data name="Menu_TrialNavFailed" xml:space="preserve">
+    <value>Cannot currently reach
+the Marketplace.  Please
+try again later.</value>
+    <comment>Menu - message when showing the Marketplace fails</comment>
   </data>
   <data name="NewGame" xml:space="preserve">
     <value>New Game</value>

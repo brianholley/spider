@@ -49,6 +49,18 @@ namespace Spider
             return null;
         }
 
+        public int GetCountOfHiddenCards()
+        {
+            int c = 0;
+            foreach (Card card in cards)
+            {
+                if (card.Visible)
+                    break;
+                c++;
+            }
+            return c;
+        }
+
         public bool CanPickupRun(int pos)
         {
             int topOfRun = GetTopOfSequentialRun();

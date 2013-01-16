@@ -46,7 +46,7 @@ namespace Spider
         
         Rectangle undoButtonRect;
 
-        private const int MiniumumDragDistanceSq = 5 * 5;
+        private const int MiniumumDragDistanceSq = 6 * 6;
 
         // TODO: Show errors + alerts (strings, buzzer, etc.)
         public BoardView(Board board, Rectangle viewRect)
@@ -89,10 +89,7 @@ namespace Spider
 
         public Rectangle GetAreaOfStack(CardStack stack)
         {
-            int spacing = (viewRect.Width - cardSize.X * Board.StackCount) / (Board.StackCount - 1);
-            int delta = GetStackDeltaForStack(stack);
-            int stackSize = Math.Max(stack.Count, 1);
-            return new Rectangle(stack.Index * (cardSize.X + spacing), 0, cardSize.X, stackSize * delta + cardSize.Y);
+            return GetRectOfCardRunInStack(stack, 0, stack.Count);
         }
 
         public CardStack GetStackAtPoint(Point pt)
@@ -114,17 +111,32 @@ namespace Spider
         public Point GetLocationOfCardInStack(CardStack stack, int card)
         {
             Point stackLoc = GetLocationOfStack(stack);
-            int stackDelta = GetStackDeltaForStack(stack);
-			return new Point(stackLoc.X, card * stackDelta);
+            int hidden = stack.GetCountOfHiddenCards();
+            int delta = GetVisibleCardDelta(stack);
+            int y = (card < hidden ? card * HiddenCardDelta : hidden * HiddenCardDelta + (card - hidden) * delta);
+			return new Point(stackLoc.X, y);
         }
 
-        public int GetStackDeltaForStack(CardStack stack)
+        public Rectangle GetRectOfCardRunInStack(CardStack stack, int card, int cards)
         {
-            int stackSize = stack.Count;
-            if (stackSize > 0)
+            Point loc = GetLocationOfCardInStack(stack, card);
+            int hidden = stack.GetCountOfHiddenCards();
+            int hiddenUsed = Math.Max(Math.Min(hidden, card + cards) - card, 0);
+            int delta = GetVisibleCardDelta(stack);
+            int height = hiddenUsed * HiddenCardDelta + (cards - hiddenUsed - 1) * delta + cardSize.Y;
+            return new Rectangle(loc.X, loc.Y, cardSize.X, height);
+        }
+
+        public int CardDelta { get { return 25; } }
+        public int HiddenCardDelta { get { return 10; } }
+
+        private int GetVisibleCardDelta(CardStack stack)
+        {
+            if (stack.Count > 0)
             {
-                int stackDelta = (viewRect.Height - cardSize.Y * 2) / stackSize;
-                return Math.Min(stackDelta, 20);
+                int hidden = stack.GetCountOfHiddenCards();
+                int delta = (stack.Count > hidden ? (viewRect.Height - cardSize.Y * 2 - hidden * HiddenCardDelta) / (stack.Count - hidden) : CardDelta);
+                return Math.Min(delta, CardDelta);
             }
             else
             {
@@ -214,7 +226,6 @@ namespace Spider
                 else
                 {
                     int stackCount = board.GetStack(i).Count - (currentAction == CardAction.Dragging && i == currentStack ? cardsInAction.Count : 0);
-                    int stackDelta = GetStackDeltaForStack(board.GetStack(i));
                     for (int c = 0; c < stackSize; c++)
                     {
                         Card card = board.GetStack(i).GetCard(c);
@@ -321,12 +332,10 @@ namespace Spider
 
         public void FixupStackCardViewRects(CardStack stack)
         {
-            int spacing = (viewRect.Width - cardSize.X * Board.StackCount) / (Board.StackCount - 1);
-            int stackDelta = GetStackDeltaForStack(stack);
             for (int c = 0; c < stack.Count; c++)
             {
                 Card card = stack.GetCard(c);
-                card.View.Rect = new Rectangle(stack.Index * (cardSize.X + spacing), c * stackDelta, cardSize.X, cardSize.Y);
+                card.View.Rect = GetRectOfCardRunInStack(stack, c, 1);
             }
         }
 
@@ -351,10 +360,14 @@ namespace Spider
                     {
                         card.View.Highlighted = false;
                     }
-                    if (board.CanMoveCardToStack(cardsInAction[0], stack))
+                    foreach (Card cardInAction in cardsInAction)
                     {
-                        if (stack.Count > 0)
-                            stack.GetLastCard().View.Highlighted = true;
+                        if (board.CanMoveCardToStack(cardInAction, stack))
+                        {
+                            if (stack.Count > 0)
+                                stack.GetLastCard().View.Highlighted = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -412,16 +425,50 @@ namespace Spider
             {
                 currentAction = CardAction.None;
 
-                CardStack srcStack = board.GetStack(currentStack);
-                CardStack destStack = GetStackAtPoint(pt);
-                if (destStack != null && destStack.Index != currentStack &&
-                    board.CanMoveCardToStack(cardsInAction[0], destStack))
+                CardStack destStack;
+                Rectangle card0Rect = cardsInAction[0].View.Rect;
+                CardStack destStack1 = GetStackAtPoint(card0Rect.Location);
+                CardStack destStack2 = GetStackAtPoint(new Point(card0Rect.Right, card0Rect.Top));
+                if (destStack1 != null && destStack2 != null)
                 {
-                    MoveCards(srcStack, srcStack.Count - cardsInAction.Count, destStack);
-                    if (destStack.ContainsCompleteRun())
-                        ClearRun(destStack);
+                    Rectangle destRect1 = GetAreaOfStack(destStack1);
+                    Rectangle destRect2 = GetAreaOfStack(destStack2);
+
+                    if (destRect1.Width - (card0Rect.Left - destRect1.Left) > card0Rect.Right - destRect2.Left)
+                        destStack = destStack1;
+                    else
+                        destStack = destStack2;
+                }
+                else if (destStack1 != null)
+                {
+                    destStack = destStack1;
                 }
                 else
+                {
+                    destStack = destStack2;
+                }
+
+                CardStack srcStack = board.GetStack(currentStack);
+                bool movedRun = false;
+                for (int t = 0; t < 2 && !movedRun; t++)
+                {
+                    if (destStack != null && destStack.Index != currentStack)
+                    {
+                        for (int i = 0; i < cardsInAction.Count; i++)
+                        {
+                            if (board.CanMoveCardToStack(cardsInAction[i], destStack))
+                            {
+                                MoveCards(srcStack, srcStack.Count - cardsInAction.Count + i, destStack);
+                                if (destStack.ContainsCompleteRun())
+                                    ClearRun(destStack);
+                                movedRun = true;
+                                break;
+                            }
+                        }
+                    }
+                    destStack = (destStack == destStack1 ? destStack2 : destStack1);
+                }
+                if (!movedRun)
                 {
                     FixupStackCardViewRects(srcStack);
                 }
@@ -440,14 +487,19 @@ namespace Spider
                     }
                     else
                     {
-                        if (board.CanMoveCardToStack(cardsInAction[0], stack))
+                        for (int i=0; i < cardsInAction.Count; i++)
                         {
-                            MoveCards(board.GetStack(currentStack), board.GetStack(currentStack).Count - cardsInAction.Count, stack);
-                            if (stack.ContainsCompleteRun())
-                                ClearRun(stack);
-                            cardsInAction = null;
+                            if (board.CanMoveCardToStack(cardsInAction[i], stack))
+                            {
+                                MoveCards(board.GetStack(currentStack), board.GetStack(currentStack).Count - cardsInAction.Count + i, stack);
+                                if (stack.ContainsCompleteRun())
+                                    ClearRun(stack);
+                                cardsInAction = null;
+                                break;
+                            }
                         }
-                        else
+                        
+                        if (cardsInAction != null)
                         {
                             cardsInAction = null;
                             if (stack.Count > 0)
@@ -495,7 +547,6 @@ namespace Spider
 
                 dragInfo.stack = cardStack.Index;
 
-
                 Point cardOrigin = GetLocationOfCardInStack(cardStack, cardStack.Count - dragInfo.cardsToDrag.Count);
                 dragInfo.startPos = pt;
                 dragInfo.offset = new Point(dragInfo.startPos.X - cardOrigin.X, dragInfo.startPos.Y - cardOrigin.Y);
@@ -504,18 +555,20 @@ namespace Spider
 
         public void ContinueDrag(Point pt)
         {
-            if (dragInfo != null && DistanceSq(pt, dragInfo.startPos) > MiniumumDragDistanceSq)
+            if (dragInfo != null && DistanceSq(pt, dragInfo.startPos) > MiniumumDragDistanceSq && currentAction != CardAction.Dragging)
             {
                 currentAction = CardAction.Dragging;
                 cardsInAction = dragInfo.cardsToDrag;
                 currentStack = dragInfo.stack;
+
+                FixupCardHighlights();
             }
 
             if (currentAction == CardAction.Dragging)
             {
                 dragInfo.currentPos = pt;
                 Point origin = new Point(dragInfo.currentPos.X - dragInfo.offset.X, dragInfo.currentPos.Y - dragInfo.offset.Y);
-                int delta = GetStackDeltaForStack(board.GetStack(dragInfo.stack));
+                int delta = GetVisibleCardDelta(board.GetStack(dragInfo.stack));
                 for (int i = 0; i < cardsInAction.Count; i++)
                 {
                     cardsInAction[i].View.Rect = new Rectangle(origin.X, origin.Y + i * delta, cardSize.X, cardSize.Y);
@@ -533,6 +586,8 @@ namespace Spider
                 if (animation is DealAnimation)
                     return;
             }
+
+            board.ClearUndoStack();
 
             Animation dealAnimation = new DealAnimation(board, board.CardsInNextDeal()) { OnAnimationCompleted = OnCompletedDealAnimation };
             currentAnimations.Add(dealAnimation);
@@ -591,6 +646,8 @@ namespace Spider
                 if (animation is ClearRunAnimation)
                     clearAnimations++;
             }
+
+            board.ClearUndoStack();
 
             Point destPoint = new Point((board.CompletedCount() + clearAnimations) * 25 + undoButtonRect.Width + 20, viewRect.Height - cardSize.Y);
             Animation clearAnimation = new ClearRunAnimation(board, stack.Index, destPoint) { OnAnimationCompleted = OnCompletedClearRunAnimation };

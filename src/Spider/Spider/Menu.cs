@@ -10,6 +10,7 @@ using System.Reflection;
 
 namespace Spider
 {
+    delegate void OnClick();
     delegate void OnButtonClicked(MenuButton button);
 
     class Menu
@@ -95,16 +96,6 @@ namespace Spider
             newGameButton.ButtonClickDelegate = OnNewGameClicked;
             buttons.Add(newGameButton);
 
-            if (GameStateManager.IsTrial)
-            {
-                int gamesLeft = Math.Max(TrialMode.TrialGamesLimit - Statistics.TotalGames, 0);
-                string gamesLeftStr = string.Format(Strings.Menu_TrialGamesRemaining, gamesLeft);
-                TextMenuButton gamesLeftButton = new TextMenuButton() { Text = gamesLeftStr, Font = menuTrialDetailFont, Enabled = true };
-                Vector2 gamesLeftSize = gamesLeftButton.Font.MeasureString(gamesLeftButton.Text);
-                gamesLeftButton.Rect = new Rectangle(x, newGameButton.Rect.Top + (int)newGameSize.Y - gamesLeftButton.Font.LineSpacing, (int)gamesLeftSize.X, gamesLeftButton.Font.LineSpacing);
-                buttons.Add(gamesLeftButton);
-            }
-
             int imageWidth = GameStateManager.ViewRect.Width / 8 + 20;
             int imageHeight = imageWidth * oneSuitTex.Height / oneSuitTex.Width;
 
@@ -160,7 +151,7 @@ namespace Spider
 
                 TextMenuButton bannerTextButton = new TextMenuButton() { Text = Strings.Menu_TrialBanner, Font = menuSubFont, Color = Color.Black, Rotation = (float)(-Math.PI / 4) };
                 Vector2 bannerTextSize = bannerTextButton.Font.MeasureString(bannerTextButton.Text);
-                bannerTextButton.Rect = new Rectangle(trialBannerButton.Rect.X + (int)bannerTextSize.Y / 2, viewRect.Bottom - (int)bannerTextSize.Y / 2, (int)bannerTextSize.X, (int)bannerTextSize.Y);
+                bannerTextButton.Rect = new Rectangle(trialBannerButton.Rect.X + 3 * (int)bannerTextSize.Y / 4, viewRect.Bottom - 3 * (int)bannerTextSize.Y / 4, (int)bannerTextSize.X, (int)bannerTextSize.Y);
                 buttons.Add(bannerTextButton);
             }
 
@@ -255,7 +246,6 @@ namespace Spider
                     batch.DrawString(menuBackgroundFont, Strings.AppName, offset, new Color(32, 32, 32), 0.0f, Vector2.Zero, scale, SpriteEffects.None, 1);
                 }
 
-                //batch.Draw(CardResources.BlankTex, rect, Color.White);
                 batch.Draw(spiderCardTex, spiderCardBounds, Color.White);
 
                 foreach (MenuButton button in buttons)
@@ -314,14 +304,6 @@ namespace Spider
 
         private void OnSuitImageClicked(MenuButton button)
         {
-            if (GameStateManager.IsTrial)
-            {
-                if (Statistics.TotalGames >= TrialMode.TrialGamesLimit)
-                {
-                    trialWindow = new TrialWindow(viewRect, Strings.Menu_TrialGameCountReached);
-                    return;
-                }
-            }
             ImageMenuButton imageButton = button as ImageMenuButton;
             if (imageButton.Texture == oneSuitTex)
                 Board.SuitCount = 1;
@@ -365,7 +347,7 @@ namespace Spider
 
         private void OnTrialBannerClicked(MenuButton button)
         {
-            TrialMode.LaunchMarketplace();
+            trialWindow = new TrialWindow(viewRect, Strings.Menu_TrialBannerNav);
         }
 
         // TODO: Probably get rid of this
@@ -823,6 +805,7 @@ namespace Spider
 
         private Rectangle viewRect;
         private List<MenuButton> labels = new List<MenuButton>();
+        MessageWindow messageWindow;
         
         public AboutView(Rectangle rc)
         {
@@ -915,19 +898,30 @@ namespace Spider
 
         public void Update()
         {
-            foreach (TouchLocation touchLoc in TouchPanel.GetState())
+            if (messageWindow != null)
             {
-                Point pt = new Point((int)touchLoc.Position.X, (int)touchLoc.Position.Y);
-
-                if (touchLoc.State == TouchLocationState.Released)
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || messageWindow.Update() == false)
                 {
-                    foreach (MenuButton button in labels)
+                    messageWindow = null;
+                    return;
+                }
+            }
+            else
+            {
+                foreach (TouchLocation touchLoc in TouchPanel.GetState())
+                {
+                    Point pt = new Point((int)touchLoc.Position.X, (int)touchLoc.Position.Y);
+
+                    if (touchLoc.State == TouchLocationState.Released)
                     {
-                        if (button.Rect.Contains(pt))
+                        foreach (MenuButton button in labels)
                         {
-                            if (button.ButtonClickDelegate != null)
-                                button.ButtonClickDelegate(button);
-                            break;
+                            if (button.Rect.Contains(pt))
+                            {
+                                if (button.ButtonClickDelegate != null)
+                                    button.ButtonClickDelegate(button);
+                                break;
+                            }
                         }
                     }
                 }
@@ -951,6 +945,11 @@ namespace Spider
             }
 
             batch.End();
+
+            if (messageWindow != null)
+            {
+                messageWindow.Render(rect, batch);
+            }
         }
 
         public void OnClose()
@@ -960,6 +959,79 @@ namespace Spider
         private void OnUpgradeClicked(MenuButton button)
         {
             TrialMode.LaunchMarketplace();
+        }
+    }
+    
+    class MessageWindow
+    {
+        private static Texture2D backgroundTex;
+        private static SpriteFont font;
+
+        public static int ContentCount() { return 2; }
+        public static void LoadContent(ContentManager content, ContentLoadNotificationDelegate callback)
+        {
+            backgroundTex = content.Load<Texture2D>(@"Menu\MessageWindow");
+            callback();
+            font = content.Load<SpriteFont>(@"Menu\MessageFont");
+            callback();
+        }
+
+        Rectangle viewRect;
+        Rectangle windowRect;
+        Vector2 textPos;
+        string windowText;
+        public OnClick ClickDelegate { get; set; }
+
+        public MessageWindow(Rectangle viewRect, string text)
+        {
+            this.viewRect = viewRect;
+            SetText(text);
+        }
+
+        protected void SetText(string text)
+        {
+            windowText = text;
+
+            Vector2 textSize = font.MeasureString(windowText);
+            textPos = new Vector2((viewRect.Width - textSize.X) / 2, (viewRect.Height - textSize.Y) / 2);
+
+            int xPadding = (int)(textSize.X * 0.15);
+            int yPadding = (int)(textSize.Y * 0.15);
+            windowRect = new Rectangle(
+                (int)textPos.X - xPadding,
+                (int)textPos.Y - yPadding,
+                (int)textSize.X + xPadding * 2,
+                (int)textSize.Y + yPadding * 2);
+        }
+
+        public virtual bool Update()
+        {
+            foreach (TouchLocation touchLoc in TouchPanel.GetState())
+            {
+                Point pt = new Point((int)touchLoc.Position.X, (int)touchLoc.Position.Y);
+                if (touchLoc.State == TouchLocationState.Released)
+                {
+                    if (windowRect.Contains(pt))
+                    {
+                        ClickDelegate();
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public void Render(Rectangle rect, SpriteBatch batch)
+        {
+            Color overlayColor = Color.Multiply(Color.Black, 0.8f);
+
+            batch.Begin();
+
+            batch.Draw(CardResources.BlankTex, viewRect, overlayColor);
+            batch.Draw(backgroundTex, windowRect, Color.White);
+            batch.DrawString(font, windowText, textPos, Color.White);
+
+            batch.End();
         }
     }
 }

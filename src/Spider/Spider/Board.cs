@@ -150,8 +150,6 @@ namespace Spider
 		        card.Reveal();
                 stacks[i].Add(card);
 	        }
-	
-	        undoStack.Clear();
         }
 
         public bool CanUndo()
@@ -169,6 +167,11 @@ namespace Spider
             if (CanUndo())
                 return undoStack.stack[undoStack.stack.Count - 1];
             return null;
+        }
+
+        public void ClearUndoStack()
+        {
+            undoStack.Clear();
         }
 
         public CardStack GetStack(int stack)
@@ -206,8 +209,6 @@ namespace Spider
                     throw new Exception();
                 }
 #endif
-
-                undoStack.Clear();
             }
         }
 
