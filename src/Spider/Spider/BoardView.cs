@@ -46,7 +46,7 @@ namespace Spider
         
         Rectangle undoButtonRect;
 
-        private const int MiniumumDragDistanceSq = 6 * 6;
+        private const int MiniumumDragDistanceSq = 10 * 10;
 
         // TODO: Show errors + alerts (strings, buzzer, etc.)
         public BoardView(Board board, Rectangle viewRect)
@@ -432,7 +432,8 @@ namespace Spider
                 Rectangle card0Rect = cardsInAction[0].View.Rect;
                 CardStack destStack1 = GetStackAtPoint(card0Rect.Location);
                 CardStack destStack2 = GetStackAtPoint(new Point(card0Rect.Right, card0Rect.Top));
-                if (destStack1 != null && destStack2 != null)
+				CardStack destStack3 = GetStackAtPoint(pt);
+                if (destStack1 != null && destStack2 != null) // Check based on card position first
                 {
                     Rectangle destRect1 = GetAreaOfStack(destStack1);
                     Rectangle destRect2 = GetAreaOfStack(destStack2);
@@ -442,14 +443,18 @@ namespace Spider
                     else
                         destStack = destStack2;
                 }
-                else if (destStack1 != null)
+                else if (destStack1 != null) // Prefer card location instead of top right
                 {
                     destStack = destStack1;
                 }
-                else
-                {
-                    destStack = destStack2;
-                }
+				else if (destStack2 != null) // Prefer top right instead of touch pos
+				{
+					destStack = destStack2;
+				}
+				else // Accept touch pos if we don't have a better option
+				{
+					destStack = destStack3;
+				}
 
                 CardStack srcStack = board.GetStack(currentStack);
                 bool movedRun = false;
