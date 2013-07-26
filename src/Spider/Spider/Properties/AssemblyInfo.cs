@@ -8,9 +8,9 @@ using System.Resources;
 // associated with an assembly.
 [assembly: AssemblyTitle("Spider")]
 [assembly: AssemblyProduct("Spider")]
-[assembly: AssemblyDescription("Spider Solitaire for Windows Phone 7")]
+[assembly: AssemblyDescription("Spider Solitaire for Windows Phone")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2011")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Resources;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.2.0130.1")]
+[assembly: AssemblyVersion("1.2.0725.1")]
 [assembly: NeutralResourcesLanguageAttribute("en")]

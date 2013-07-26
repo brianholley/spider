@@ -64,65 +64,78 @@ namespace Spider
         public static int ContentCount() { return 1 + 1 + 3 + suitNamesShort.Length + valueNamesShort.Length + 8 + 2; }
         public static void LoadResources(GraphicsDevice graphicsDevice, ContentManager content, ContentLoadNotificationDelegate callback)
         {
-            CardTex = content.Load<Texture2D>(@"Card\Card");
-            callback();
-
-            CardBackTex = content.Load<Texture2D>(@"Card\CardBack_White");
-            callback();
-
-            HighlightEndTex = content.Load<Texture2D>(@"Card\Highlight_End");
-            callback();
-            HightlightCenterTex = content.Load<Texture2D>(@"Card\Highlight_Center");
-            callback();
-            PlaceholderTex = content.Load<Texture2D>(@"Card\Placeholder");
-            callback();
-
-            List<Texture2D> suitTex = new List<Texture2D>(suitNamesShort.Length);
-            foreach (string suit in suitNamesShort)
-            {
-                suitTex.Add(content.Load<Texture2D>(@"Card\" + suit));
-                callback();
-            }
-            SuitTex = suitTex;
-
-            List<Texture2D> valueTex = new List<Texture2D>(valueNamesShort.Length);
-            foreach (string value in valueNamesShort)
-            {
-                valueTex.Add(content.Load<Texture2D>(@"Card\" + value));
-                callback();
-            }
-            ValueTex = valueTex;
-
-            GradientTex = content.Load<Texture2D>("Gradient");
-            callback();
-            BlankTex = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            BlankTex.SetData<Color>(new Color[] { Color.White });
-            callback();
-
-            UndoTex = content.Load<Texture2D>("Undo");
-            callback();
-
-            WinFont = content.Load<SpriteFont>(@"Win\WinFont");
-            callback();
-            AgainFont = content.Load<SpriteFont>(@"Win\AgainFont");
-            callback();
-            RocketTex = content.Load<Texture2D>(@"Win\Rocket");
-            callback();
-            List<Texture2D> puffTex = new List<Texture2D>();
-            for (int i = 0; i < 2; i++)
-            {
-                puffTex.Add(content.Load<Texture2D>(@"Win\Puff" + (i + 1)));
-                callback();
-            }
-            PuffTex = puffTex;
-            List<Texture2D> particleTex = new List<Texture2D>();
-            for (int i = 0; i < 2; i++)
-            {
-                particleTex.Add(content.Load<Texture2D>(@"Win\Firework" + (i + 1)));
-                callback();
-            }
-            FireworkParticleTex = particleTex;
+			LoadCardResources(graphicsDevice, content, callback);
+			LoadBoardResources(graphicsDevice, content, callback);
+			LoadVictoryResources(graphicsDevice, content, callback);
         }
+
+		public static void LoadCardResources(GraphicsDevice graphicsDevice, ContentManager content, ContentLoadNotificationDelegate callback)
+		{
+			CardTex = content.Load<Texture2D>(@"Card\Card");
+			callback();
+
+			CardBackTex = content.Load<Texture2D>(@"Card\CardBack_White");
+			callback();
+
+			HighlightEndTex = content.Load<Texture2D>(@"Card\Highlight_End");
+			callback();
+			HightlightCenterTex = content.Load<Texture2D>(@"Card\Highlight_Center");
+			callback();
+			PlaceholderTex = content.Load<Texture2D>(@"Card\Placeholder");
+			callback();
+
+			List<Texture2D> suitTex = new List<Texture2D>(suitNamesShort.Length);
+			foreach (string suit in suitNamesShort)
+			{
+				suitTex.Add(content.Load<Texture2D>(@"Card\" + suit));
+				callback();
+			}
+			SuitTex = suitTex;
+
+			List<Texture2D> valueTex = new List<Texture2D>(valueNamesShort.Length);
+			foreach (string value in valueNamesShort)
+			{
+				valueTex.Add(content.Load<Texture2D>(@"Card\" + value));
+				callback();
+			}
+			ValueTex = valueTex;
+		}
+
+		public static void LoadBoardResources(GraphicsDevice graphicsDevice, ContentManager content, ContentLoadNotificationDelegate callback)
+		{
+			GradientTex = content.Load<Texture2D>("Gradient");
+			callback();
+			BlankTex = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
+			BlankTex.SetData<Color>(new Color[] { Color.White });
+			callback();
+
+			UndoTex = content.Load<Texture2D>("Undo");
+			callback();
+		}
+
+		public static void LoadVictoryResources(GraphicsDevice graphicsDevice, ContentManager content, ContentLoadNotificationDelegate callback)
+		{
+			WinFont = content.Load<SpriteFont>(@"Win\WinFont");
+			callback();
+			AgainFont = content.Load<SpriteFont>(@"Win\AgainFont");
+			callback();
+			RocketTex = content.Load<Texture2D>(@"Win\Rocket");
+			callback();
+			List<Texture2D> puffTex = new List<Texture2D>();
+			for (int i = 0; i < 2; i++)
+			{
+				puffTex.Add(content.Load<Texture2D>(@"Win\Puff" + (i + 1)));
+				callback();
+			}
+			PuffTex = puffTex;
+			List<Texture2D> particleTex = new List<Texture2D>();
+			for (int i = 0; i < 2; i++)
+			{
+				particleTex.Add(content.Load<Texture2D>(@"Win\Firework" + (i + 1)));
+				callback();
+			}
+			FireworkParticleTex = particleTex;
+		}
     }
 
     class Card

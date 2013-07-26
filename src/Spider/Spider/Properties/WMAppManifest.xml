@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.0">
-  <App xmlns="" ProductID="{c8f91c9d-0a91-47f2-844a-0651a82add21}" Title="Spider" RuntimeType="XNA" Version="1.0.0.0" Genre="Apps.Normal" Author="" Description="" Publisher="">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
+  <App xmlns="" ProductID="{62893813-aff1-4afb-a55c-b169f287c9c0}" Title="Spider" RuntimeType="XNA" Version="1.2.0725.1" Genre="Apps.Normal" Author="" Description="" Publisher="">
     <IconPath IsRelative="true" IsResource="false"></IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
@@ -16,7 +16,7 @@
       <Capability Name="ID_CAP_IDENTITY_DEVICE" />
     </Capabilities>
     <Tasks>
-      <DefaultTask Name="_default"/>
+      <DefaultTask Name="_default" />
     </Tasks>
     <Tokens>
       <PrimaryToken TokenID="SpiderToken" TaskName="_default">
@@ -29,4 +29,3 @@
     </Tokens>
   </App>
 </Deployment>
-

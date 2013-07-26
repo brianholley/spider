@@ -266,7 +266,7 @@ namespace Spider
                             Vector2 pos = new Vector2(button.Rect.X, button.Rect.Y);
                             batch.DrawString(textButton.Font, textButton.Text, pos, button.Color, textButton.Rotation, Vector2.Zero, 1.0f, SpriteEffects.None, 0);
                         }
-                        if (imageButton != null)
+                        if (imageButton != null && imageButton.Texture != null)
                         {
                             batch.Draw(imageButton.Texture, button.Rect, button.Color);
                         }
