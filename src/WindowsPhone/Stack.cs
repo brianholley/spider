@@ -1,120 +1,122 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Spider
 {
-    class CardStack
-    {
-        private List<Card> cards = new List<Card>();
+	internal class CardStack
+	{
+		private readonly List<Card> _cards = new List<Card>();
 
-        public int Index { get; private set; }
-        public int Count { get { return cards.Count; } }
+		public int Index { get; private set; }
 
-        public CardStack(int index)
-        {
-            Index = index;
-        }
+		public int Count
+		{
+			get { return _cards.Count; }
+		}
 
-        public void Add(Card card)
-        {
-            cards.Add(card);
-        }
+		public CardStack(int index)
+		{
+			Index = index;
+		}
 
-        public void RemoveRange(int index, int count)
-        {
-            cards.RemoveRange(index, count);
-        }
+		public void Add(Card card)
+		{
+			_cards.Add(card);
+		}
 
-        public void Clear()
-        {
-            cards.Clear();
-        }
+		public void RemoveRange(int index, int count)
+		{
+			_cards.RemoveRange(index, count);
+		}
 
-        public Card GetCard(int pos)
-        {
-            return cards[pos];
-        }
+		public void Clear()
+		{
+			_cards.Clear();
+		}
 
-        public List<Card> GetCards()
-        {
-            return new List<Card>(cards);
-        }
+		public Card GetCard(int pos)
+		{
+			return _cards[pos];
+		}
 
-        public Card GetLastCard()
-        {
-            if (cards.Count > 0)
-                return cards[cards.Count - 1];
-            return null;
-        }
+		public List<Card> GetCards()
+		{
+			return new List<Card>(_cards);
+		}
 
-        public int GetCountOfHiddenCards()
-        {
-            int c = 0;
-            foreach (Card card in cards)
-            {
-                if (card.Visible)
-                    break;
-                c++;
-            }
-            return c;
-        }
+		public Card GetLastCard()
+		{
+			if (_cards.Count > 0)
+				return _cards[_cards.Count - 1];
+			return null;
+		}
 
-        public bool CanPickupRun(int pos)
-        {
-            int topOfRun = GetTopOfSequentialRun();
-            return (pos >= topOfRun && pos < cards.Count);
-        }
+		public int GetCountOfHiddenCards()
+		{
+			int c = 0;
+			foreach (Card card in _cards)
+			{
+				if (card.Visible)
+					break;
+				c++;
+			}
+			return c;
+		}
 
-        public int GetTopOfSequentialRun()
-        {
-            if (cards.Count == 0)
-                return -1;
+		public bool CanPickupRun(int pos)
+		{
+			int topOfRun = GetTopOfSequentialRun();
+			return (pos >= topOfRun && pos < _cards.Count);
+		}
 
-            int i = cards.Count - 1;
-            Card current = GetLastCard();
-            for (; i > 0; i--)
-            {
-                Card next = cards[i - 1];
-                if (!next.Visible || next.Value != current.Value + 1 || next.Suit != current.Suit)
-                    break;
-                current = next;
-            }
-            return i;
-        }
+		public int GetTopOfSequentialRun()
+		{
+			if (_cards.Count == 0)
+				return -1;
 
-        public bool ContainsCompleteRun()
-        {
-            int top = GetTopOfSequentialRun();
-            if (cards.Count - top == 13)
-            {
-                Card topCard = cards[top];
-                Card bottomCard = GetLastCard();
-                if (topCard.Value == Value.King && bottomCard.Value == Value.Ace)
-                    return true;
-            }
-            return false;
-        }
+			int i = _cards.Count - 1;
+			Card current = GetLastCard();
+			for (; i > 0; i--)
+			{
+				Card next = _cards[i - 1];
+				if (!next.Visible || next.Value != current.Value + 1 || next.Suit != current.Suit)
+					break;
+				current = next;
+			}
+			return i;
+		}
 
-        public List<Card> RemoveCompleteRun(bool revealCard)
-        {
-            if (!ContainsCompleteRun())
-            {
-                Console.WriteLine("Asked to remove run from stack when run is not complete - bug?");
-                return null;
-            }
+		public bool ContainsCompleteRun()
+		{
+			int top = GetTopOfSequentialRun();
+			if (_cards.Count - top == 13)
+			{
+				Card topCard = _cards[top];
+				Card bottomCard = GetLastCard();
+				if (topCard.Value == Value.King && bottomCard.Value == Value.Ace)
+					return true;
+			}
+			return false;
+		}
 
-            List<Card> completed = new List<Card>(cards.GetRange(cards.Count - 13, 13));
-            cards.RemoveRange(cards.Count - 13, 13);
+		public List<Card> RemoveCompleteRun(bool revealCard)
+		{
+			if (!ContainsCompleteRun())
+			{
+				Console.WriteLine("Asked to remove run from stack when run is not complete - bug?");
+				return null;
+			}
 
-            if (cards.Count > 0 && revealCard)
-            {
-                Card card = GetLastCard();
-                if (!card.Visible)
-                    card.Reveal();
-            }
-            return completed;
-        }
-    }
+			var completed = new List<Card>(_cards.GetRange(_cards.Count - 13, 13));
+			_cards.RemoveRange(_cards.Count - 13, 13);
+
+			if (_cards.Count > 0 && revealCard)
+			{
+				Card card = GetLastCard();
+				if (!card.Visible)
+					card.Reveal();
+			}
+			return completed;
+		}
+	}
 }

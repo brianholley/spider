@@ -1,107 +1,146 @@
 using System;
-using System.Collections.Generic;
-using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.IO.IsolatedStorage;
 
 namespace Spider
 {
-    class Statistics
-    {
-        public static bool Load()
-        {
-            // If already loaded...
-            if (stats != null)
-                return true;
+	internal class Statistics
+	{
+		public static bool Load()
+		{
+			// If already loaded...
+			if (_stats != null)
+				return true;
 
-            try
-            {
-                IsolatedStorageFile isoFile = IsolatedStorageFile.GetUserStoreForApplication();
-                if (isoFile.FileExists(Filename))
-                {
-                    IsolatedStorageFileStream stream = IsolatedStorageFile.GetUserStoreForApplication().OpenFile(Filename, FileMode.Open);
-                    TextReader reader = new StreamReader(stream);
-                    XmlSerializer serializer = new XmlSerializer(typeof(SerializedStatistics));
-                    stats = serializer.Deserialize(reader) as SerializedStatistics;
-                    reader.Close();
-                }
-                else
-                {
-                    stats = new SerializedStatistics();
-                }
-                return true;
-            }
-            catch (FileNotFoundException)
-            {
-                // No statistics file found - that's okay
-                return true;
-            }
-            catch (Exception exc)
-            {
-                System.Diagnostics.Debug.WriteLine(exc);
-                stats = new SerializedStatistics();
-                return false;
-            }
-        }
+			try
+			{
+				var isoFile = IsolatedStorageFile.GetUserStoreForApplication();
+				if (isoFile.FileExists(Filename))
+				{
+					var stream = IsolatedStorageFile.GetUserStoreForApplication().OpenFile(Filename, FileMode.Open);
+					var reader = new StreamReader(stream);
+					var serializer = new XmlSerializer(typeof (SerializedStatistics));
+					_stats = serializer.Deserialize(reader) as SerializedStatistics;
+					reader.Close();
+				}
+				else
+				{
+					_stats = new SerializedStatistics();
+				}
+				return true;
+			}
+			catch (FileNotFoundException)
+			{
+				// No statistics file found - that's okay
+				return true;
+			}
+			catch (Exception exc)
+			{
+				System.Diagnostics.Debug.WriteLine(exc);
+				_stats = new SerializedStatistics();
+				return false;
+			}
+		}
 
-        public static void Save()
-        {
-            // If stats never loaded, they wouldn't have changed...
-            if (stats == null)
-                return;
+		public static void Save()
+		{
+			// If stats never loaded, they wouldn't have changed...
+			if (_stats == null)
+				return;
 
-            try
-            {
-                IsolatedStorageFileStream stream = IsolatedStorageFile.GetUserStoreForApplication().OpenFile(Filename, FileMode.Create);
-                StreamWriter writer = new StreamWriter(stream);
-                XmlSerializer serializer = new XmlSerializer(typeof(SerializedStatistics));
-                serializer.Serialize(writer, stats);
-                writer.Close();
-            }
-            catch
-            {
-                // Couldn't save stats file - crap
-            }
-        }
+			try
+			{
+				var stream = IsolatedStorageFile.GetUserStoreForApplication().OpenFile(Filename, FileMode.Create);
+				var writer = new StreamWriter(stream);
+				var serializer = new XmlSerializer(typeof (SerializedStatistics));
+				serializer.Serialize(writer, _stats);
+				writer.Close();
+			}
+			catch
+			{
+				// Couldn't save stats file - crap
+			}
+		}
 
-        public static void Reset()
-        {
-            stats = new SerializedStatistics();
-        }
+		public static void Reset()
+		{
+			_stats = new SerializedStatistics();
+		}
 
-        public static int TotalGames { get { return stats.TotalGames; } set { stats.TotalGames = value; } }
-        public static int EasyGames { get { return stats.EasyGames; } set { stats.EasyGames = value; } }
-        public static int MediumGames { get { return stats.MediumGames; } set { stats.MediumGames = value; } }
-        public static int HardGames { get { return stats.HardGames; } set { stats.HardGames = value; } }
+		public static int TotalGames
+		{
+			get { return _stats.TotalGames; }
+			set { _stats.TotalGames = value; }
+		}
 
-        public static int TotalGamesWon { get { return stats.TotalGamesWon; } set { stats.TotalGamesWon = value; } }
-        public static int EasyGamesWon { get { return stats.EasyGamesWon; } set { stats.EasyGamesWon = value; } }
-        public static int MediumGamesWon { get { return stats.MediumGamesWon; } set { stats.MediumGamesWon = value; } }
-        public static int HardGamesWon { get { return stats.HardGamesWon; } set { stats.HardGamesWon = value; } }
+		public static int EasyGames
+		{
+			get { return _stats.EasyGames; }
+			set { _stats.EasyGames = value; }
+		}
 
-        public static long TotalTimePlayed { get { return stats.TotalTimePlayed; } set { stats.TotalTimePlayed = value; } }
+		public static int MediumGames
+		{
+			get { return _stats.MediumGames; }
+			set { _stats.MediumGames = value; }
+		}
 
-        protected static string Filename = "Stats.xml";
-        protected static SerializedStatistics stats;
-    }
+		public static int HardGames
+		{
+			get { return _stats.HardGames; }
+			set { _stats.HardGames = value; }
+		}
 
-    [XmlRootAttribute("Statistics")]
-    public class SerializedStatistics
-    {
-        [XmlAttribute]
-        public int StatsVersion = 1;
+		public static int TotalGamesWon
+		{
+			get { return _stats.TotalGamesWon; }
+			set { _stats.TotalGamesWon = value; }
+		}
 
-        public int TotalGames = 0;
-        public int EasyGames = 0;
-        public int MediumGames = 0;
-        public int HardGames = 0;
+		public static int EasyGamesWon
+		{
+			get { return _stats.EasyGamesWon; }
+			set { _stats.EasyGamesWon = value; }
+		}
 
-        public int TotalGamesWon = 0;
-        public int EasyGamesWon = 0;
-        public int MediumGamesWon = 0;
-        public int HardGamesWon = 0;
+		public static int MediumGamesWon
+		{
+			get { return _stats.MediumGamesWon; }
+			set { _stats.MediumGamesWon = value; }
+		}
 
-        public long TotalTimePlayed = 0;
-    }
+		public static int HardGamesWon
+		{
+			get { return _stats.HardGamesWon; }
+			set { _stats.HardGamesWon = value; }
+		}
+
+		public static long TotalTimePlayed
+		{
+			get { return _stats.TotalTimePlayed; }
+			set { _stats.TotalTimePlayed = value; }
+		}
+
+		private const string Filename = "Stats.xml";
+		private static SerializedStatistics _stats;
+	}
+
+	[XmlRootAttribute("Statistics")]
+	public class SerializedStatistics
+	{
+		[XmlAttribute] public int StatsVersion = 1;
+
+		public int TotalGames = 0;
+		public int EasyGames = 0;
+		public int MediumGames = 0;
+		public int HardGames = 0;
+
+		public int TotalGamesWon = 0;
+		public int EasyGamesWon = 0;
+		public int MediumGamesWon = 0;
+		public int HardGamesWon = 0;
+
+		public long TotalTimePlayed = 0;
+	}
 }

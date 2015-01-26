@@ -1,721 +1,743 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Resources;
 
 namespace Spider
 {
-    delegate void AnimationCompleteCallback(Animation animation);
-
-    abstract class Animation
-    {
-        public abstract bool Update();
-        public abstract void Render(SpriteBatch batch);
-
-        public AnimationCompleteCallback OnAnimationCompleted;
-    }
-
-    class DealAnimation : Animation
-    {
-        private Board board;
-        private List<CardAnimationView> cardAnimations;
-        private DateTime stopTime;
-
-        public DealAnimation(Board board, List<Card> cardsToDeal)
-        {
-            this.board = board;
-
-            int cardCount = 0;
-	        int stacksEmpty = 0;
-	        for (int i=0; i < Board.StackCount; i++)
-	        {
-		        int stackSize = board.GetStack(i).Count;
-		        if (stackSize == 0)
-			        stacksEmpty++;
-		        cardCount += stackSize;
-	        }
-
-            cardAnimations = new List<CardAnimationView>(Board.StackCount);
-
-            // TODO: Revive this rule at some point?
-	        /*if (stacksEmpty > 0 && cardCount >= Board.StackCount)
-            {
-                string errorMsg = CardResources.Strings.GetString("EmptyStacksDealError");
-                board.View.AddError(errorMsg);
-                return;
-            }*/
-	
-	        int dealPos = board.CountOfExtraDealingsLeft() - 1;
-	
-	        double delay = 0.1;
-	        double duration = 0.2;
-
-            Rectangle bounds = board.View.GetViewArea();
-            Point cardSize = board.View.GetCardSize();
-            Point startPoint = new Point(bounds.Width - cardSize.X - dealPos * 25, bounds.Height - cardSize.Y);
-	        int spacing = (bounds.Width - cardSize.X * Board.StackCount) / (Board.StackCount - 1);
-
-            for (int i=0; i < cardsToDeal.Count; i++)
-	        {
-		        Card cardDealt = cardsToDeal[i];
-		        cardDealt.Reveal();
-                cardDealt.View.Animating = true;
-		
-                Point destPoint = board.View.GetLocationOfCardInStack(board.GetStack(i), board.GetStack(i).Count);
-                CardAnimationView animation = new CardAnimationView(cardDealt, i * delay, duration, startPoint, destPoint, cardSize.X, cardSize.Y);
-                cardAnimations.Insert(0, animation);
-	        }
-	
-	        stopTime = DateTime.Now.AddSeconds(cardsToDeal.Count * delay + duration);
-            Update();
-        }
-
-        public override bool Update()
-        {
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Update();
-
-            if (stopTime <= DateTime.Now || cardAnimations.Count == 0)
-            {
-                foreach (CardAnimationView animation in cardAnimations)
-                    animation.Card.View.Animating = false;
-                return false;
-            }
-            return true;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Render(batch);
-        }
-    }
-
-    class StackExpandAnimation : Animation
-    {
-        public List<CardAnimationView> cardAnimations;
-        
-        private Board board;
-        private DateTime startTime;
-        private DateTime stopTime;
-
-        private const double duration = 0.2;
-        private const int cardsPerRow = 6;
-
-        public StackExpandAnimation(Board board, CardStack stack, Point ptExpand)
-        {
-            this.board = board;
-
-            startTime = DateTime.Now;
-
-            List<Card> cardsInStack = stack.GetCards();
-            int top = stack.GetTopOfSequentialRun();
-            cardsInStack.RemoveRange(0, top);
-
-            int rows = (cardsInStack.Count + (cardsPerRow - 1)) / cardsPerRow;
-            int cols = (cardsInStack.Count < cardsPerRow ? cardsInStack.Count : cardsPerRow);
-
-            Rectangle bounds = board.View.GetViewArea();
-            Point cardSize = board.View.GetCardSize();
-            int spacing = (bounds.Width - cardSize.X * cardsPerRow) / (cardsPerRow - 1);
-            spacing = Math.Min(spacing, 10);
-
-            int xAnchor = ptExpand.X - cols / 2 * cardSize.X - (cols - 1) / 2 * spacing;
-            xAnchor = Math.Max(xAnchor, 0);                                                       // Left edge collision
-            xAnchor = Math.Min(xAnchor, bounds.Width - cardSize.X * cols - spacing * (cols - 1)); // Right edge collision
-            int yAnchor = ptExpand.Y - cardSize.Y / 2;
-            yAnchor = Math.Max(yAnchor, 0);                                                       // Top edge collision
-            yAnchor = Math.Min(yAnchor, bounds.Height - cardSize.Y * rows - spacing * (rows - 1));// Bottom edge collision
-
-            cardAnimations = new List<CardAnimationView>(cardsInStack.Count);
-            for (int i = 0; i < cardsInStack.Count; i++)
-            {
-                Card card = cardsInStack[i];
-                card.View.Animating = true;
-                Point startPoint = board.View.GetLocationOfCardInStack(stack, i + top);
-            
-                int row = i / cardsPerRow;
-                int col = i % cardsPerRow;
-                
-                int x = xAnchor + (cardSize.X + spacing) * col;
-                int y = yAnchor + (cardSize.Y + spacing) * row;
-                Point destPoint = new Point(x, y);
-
-                CardAnimationView animation = new CardAnimationView(card, 0, duration, startPoint, destPoint, cardSize.X, cardSize.Y);
-                cardAnimations.Add(animation);
-            }
-
-            stopTime = DateTime.Now.AddSeconds(duration);
-            Update();
-        }
-
-        public override bool Update()
-        {
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Update();
-
-            if (stopTime <= DateTime.Now)
-            {
-                foreach (CardAnimationView animation in cardAnimations)
-                    animation.Card.View.Animating = false;
-                return false;
-            }
-            return true;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            TimeSpan elapsed = DateTime.Now - startTime;
-            TimeSpan duration = stopTime - startTime;
-            if (elapsed > duration)
-                elapsed = duration;
-
-            double tfactor = elapsed.TotalSeconds / duration.TotalSeconds;
-
-            byte alpha = (byte)(128 * tfactor);
-            batch.Begin();
-            batch.Draw(CardResources.BlankTex, board.View.GetViewArea(), new Color(0, 0, 0, alpha));
-            batch.End();
-
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Render(batch);
-        }
-    }
-
-    class StackCollapseAnimation : Animation
-    {
-        private Board board;
-        private List<CardAnimationView> cardAnimations;
-        private DateTime startTime;
-        private DateTime stopTime;
-
-        private const double duration = 0.2;
-        
-        public StackCollapseAnimation(Board board, int stack, List<CardAnimationView> expandedCards)
-        {
-            this.board = board;
-
-            startTime = DateTime.Now;
-
-            Rectangle bounds = board.View.GetViewArea();
-            Point cardSize = board.View.GetCardSize();
-            int stackBase = board.GetStack(stack).Count - expandedCards.Count;
-            
-            cardAnimations = new List<CardAnimationView>(expandedCards.Count);
-            for (int i = 0; i < expandedCards.Count; i++)
-            {
-                Card card = expandedCards[i].Card;
-                card.View.Animating = true;
-
-                Point destPoint = board.View.GetLocationOfCardInStack(board.GetStack(stack), i + stackBase);
-
-                CardAnimationView animation = new CardAnimationView(card, 0, duration, expandedCards[i].CurrentRect.Location, destPoint, cardSize.X, cardSize.Y);
-                cardAnimations.Add(animation);
-            }
-
-            stopTime = DateTime.Now.AddSeconds(duration);
-            Update();
-        }
-
-        public override bool Update()
-        {
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Update();
-
-            if (stopTime <= DateTime.Now)
-            {
-                foreach (CardAnimationView animation in cardAnimations)
-                    animation.Card.View.Animating = false;
-                return false;
-            }
-            return true;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            TimeSpan elapsed = DateTime.Now - startTime;
-            TimeSpan duration = stopTime - startTime;
-            if (elapsed > duration)
-                elapsed = duration;
-
-            double tfactor = 1 - elapsed.TotalSeconds / duration.TotalSeconds;
-
-            byte alpha = (byte)(128 * tfactor);
-            batch.Begin();
-            batch.Draw(CardResources.BlankTex, board.View.GetViewArea(), new Color(0, 0, 0, alpha));
-            batch.End();
-
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Render(batch);
-        }
-    }
-
-    class ClearRunAnimation : Animation
-    {
-        private Board board;
-        public int Stack { get; set; }
-        private List<CardAnimationView> cardAnimations;
-        private List<CardAnimationView> completedAnimations;
-        private DateTime stopTime;
-
-        const double delay = 0.1;
-        const double duration = 0.1;
-
-        public ClearRunAnimation(Board board, int stack, Point destPoint)
-        {
-            this.board = board;
-            Stack = stack;
-
-            Rectangle bounds = board.View.GetViewArea();
-            Point cardSize = board.View.GetCardSize();
-	        int stackSize = board.GetStack(stack).Count;
-
-	        cardAnimations = new List<CardAnimationView>(13);
-	        for (int i=0; i < 13; i++)
-	        {
-		        int pos = stackSize - 13 + i;
-                Card card = board.GetStack(stack).GetCard(pos);
-                card.View.Animating = true;
-                Point startPoint = board.View.GetLocationOfCardInStack(board.GetStack(stack), pos);
-
-                CardAnimationView animation = new CardAnimationView(card, (13 - i) * delay, duration, startPoint, destPoint, cardSize.X, cardSize.Y);
-                cardAnimations.Add(animation);
-	        }
-	
-	        stopTime = DateTime.Now.AddSeconds(13 * delay + duration);
-            completedAnimations = new List<CardAnimationView>(13);
-            Update();
-        }
-
-        public override bool Update()
-        {
-            List<CardAnimationView> newlyCompletedAnimations = new List<CardAnimationView>();
-            foreach (CardAnimationView animation in cardAnimations)
-            {
-                if (animation.Update() == false)
-                    newlyCompletedAnimations.Add(animation);
-            }
-            foreach (CardAnimationView animation in newlyCompletedAnimations)
-                cardAnimations.Remove(animation);
-            completedAnimations.AddRange(newlyCompletedAnimations);
-
-            if (stopTime <= DateTime.Now)
-            {
-                foreach (CardAnimationView animation in cardAnimations)
-                    animation.Card.View.Animating = false;
-                return false;
-            }
-            return true;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            foreach (CardAnimationView animation in completedAnimations)
-                animation.Render(batch);
-            foreach (CardAnimationView animation in cardAnimations)
-                animation.Render(batch);
-        }
-    }
-
-    class ShowMoveAnimation : Animation
-    {
-        public ShowMoveAnimation(Board board, int stackSrc, int stackDest)
-        {
-            Update();
-        }
-
-        public override bool Update()
-        {
-            return false;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-        }
-    }
-
-    class WinAnimation : Animation
-    {
-        Animation winAnimation;
-
-        public WinAnimation(Board board)
-        {
-            Random r = new Random();
-            if (r.Next() % 2 == 0)
-                winAnimation = new RocketWinAnimation(board);
-            else
-                winAnimation = new FireworksWinAnimation(board);
-
-            Update();
-        }
-
-        public override bool Update()
-        {
-            return winAnimation.Update();
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            winAnimation.Render(batch);
-        }
-    }
-
-    class RocketWinAnimation : Animation
-    {
-        private Board board;
-        private DateTime startTime;
-
-        Random random;
-        private int radius;
-        private Rectangle rocketRect;
-        private float rocketRot;
-
-        private List<RocketPuff> rocketPuffs;
-        private DateTime nextPuffTime = DateTime.MinValue;
-
-        const float rocketDuration = 4.0f;
-        const float minPuffDelay = 0.04f;
-        const float maxPuffDelay = 0.12f;
-
-        public RocketWinAnimation(Board board)
-        {
-            this.board = board;
-
-            startTime = DateTime.Now;
-            random = new Random();
-            rocketPuffs = new List<RocketPuff>(20);
-
-            Rectangle bounds = board.View.GetViewArea();
-            radius = (int)(Math.Min(bounds.Height, bounds.Width / 2) * 0.9);
-            Update();
-        }
-
-        public override bool Update()
-        {
-            TimeSpan elapsed = DateTime.Now - startTime;
-
-            List<RocketPuff> invisiblePuffs = new List<RocketPuff>(rocketPuffs.Count);
-            foreach (RocketPuff puff in rocketPuffs)
-            {
-                if (!puff.Update())
-                    invisiblePuffs.Add(puff);
-            }
-            foreach (RocketPuff puff in invisiblePuffs)
-                rocketPuffs.Remove(puff);
-
-            if (elapsed.TotalSeconds < rocketDuration)
-            {
-                Rectangle bounds = board.View.GetViewArea();
-                double theta = Math.PI * (elapsed.TotalSeconds / rocketDuration);
-                int x = (int)(Math.Cos(theta) * radius + bounds.Width / 2);
-                int y = bounds.Height - (int)(Math.Sin(theta) * radius) + 60;
-
-                rocketRect = new Rectangle(x, y, 60, 60);
-                rocketRot = -(float)theta;
-
-                if (DateTime.Now > nextPuffTime)
-                {
-                    theta = Math.PI * ((elapsed.TotalSeconds - 0.1) / rocketDuration);
-                    x = (int)(Math.Cos(theta) * radius + bounds.Width / 2) - 10;
-                    y = bounds.Height - (int)(Math.Sin(theta) * radius) - 10 + 60;
-
-                    int index = new Random().Next(CardResources.PuffTex.Count) + 1;
-
-                    Rectangle rect = new Rectangle(x, y, 20, 20);
-                    float scale = 1.5f;
-                    RocketPuff puff = new RocketPuff(rect, scale, CardResources.PuffTex[random.Next(CardResources.PuffTex.Count)]);
-                    rocketPuffs.Add(puff);
-
-                    nextPuffTime = DateTime.Now.AddSeconds(random.NextDouble() * (maxPuffDelay - minPuffDelay) + minPuffDelay);
-                }
-            }
-
-            if (elapsed.TotalSeconds >= rocketDuration && rocketPuffs.Count == 0)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            foreach (RocketPuff puff in rocketPuffs)
-                puff.Render(batch);
-
-            Vector2 origin = new Vector2(CardResources.RocketTex.Width / 2, CardResources.RocketTex.Height / 2);
-            batch.Begin();
-            batch.Draw(CardResources.RocketTex, rocketRect, CardResources.RocketTex.Bounds, Color.White, rocketRot, origin, SpriteEffects.None, 0);
-            batch.End();
-        }
-    }
-    
-    class FireworksWinAnimation : Animation
-    {
-        private Board board;
-        private DateTime startTime;
-
-        private Random random;
-        private Firework firework;
-        private List<FireworkParticle> particles;
-        private DateTime lastFireworkLaunchTime = DateTime.MinValue;
-
-        Color[] fireworkColors = new Color[] { Color.Red, Color.Blue, Color.White, Color.Purple };
-
-        const int particlesPerFirework = 300;
-        Vector2 fireworkVelocity = new Vector2(0, -40);
-        Vector2 fireworkAccel = new Vector2(0, -120);
-        const float fireworkLifespan = 2.0f;
-        Vector2 fireworkSize = new Vector2(40, 40);
-
-        const float fireworkParticleStartVelocity = 450.0f;
-        const float fireworkParticleFriction = 2.5f;
-        Vector2 fireworkParticleSize = new Vector2(20, 20);
-        const float particleLifespan = 1.8f;
-        Vector2 fireworkParticleGravity = new Vector2(0, 60);
-
-        public FireworksWinAnimation(Board board)
-        {
-            this.board = board;
-
-            startTime = DateTime.Now;
-            random = new Random();
-            particles = new List<FireworkParticle>(particlesPerFirework);
-
-            Update();
-        }
-
-        public override bool Update()
-        {
-            // Launch firework
-            if (firework == null && particles.Count == 0)
-            {
-                Rectangle viewRect = board.View.GetViewArea();
-                
-                firework = new Firework(new Vector2(viewRect.Width / 2 - fireworkSize.X / 2, viewRect.Height), fireworkSize, fireworkVelocity, fireworkAccel, 0.0f, Color.White, Color.White, CardResources.RocketTex, fireworkLifespan);
-            }
-
-            // Explode firework
-            if (firework != null)
-            {
-                if (!firework.Update())
-                {
-                    Color color = fireworkColors[random.Next(fireworkColors.Length)];
-                    Color endColor = Color.Multiply(color, 0.3f);
-                    Texture2D tex = CardResources.FireworkParticleTex[random.Next(2)];
-                    for (int i = 0; i < particlesPerFirework; i++)
-                    {
-                        double theta = random.NextDouble() * Math.PI * 2.0;
-                        float velMult = (float)random.NextDouble();
-                        Vector2 vel = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta)) * fireworkParticleStartVelocity * velMult;
-
-                        FireworkParticle particle = new FireworkParticle(firework.Position, fireworkParticleSize, vel, fireworkParticleGravity, fireworkParticleFriction, color, endColor, tex, particleLifespan);
-                        particles.Add(particle);
-                    }
-
-                    firework = null;
-                }
-            }
-            
-            // Dead particles stay in the list - too much work to remove the dead ones every update
-            bool someParticlesAlive = false;
-            foreach (FireworkParticle particle in particles)
-                someParticlesAlive |= particle.Update();
-
-            if (firework == null && !someParticlesAlive)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override void Render(SpriteBatch batch)
-        {
-            batch.Begin();
-            
-            if (firework != null)
-                firework.Render(batch);
-
-            foreach (FireworkParticle particle in particles)
-                particle.Render(batch);
-            
-            batch.End();
-        }
-    }
-
-    class CardAnimationView
-    {
-        public Card Card { get; private set; }
-        public Rectangle CurrentRect { get; private set; }
-
-        public bool Started { get { return DateTime.Now >= startTime; } }
-        public bool Complted { get { return DateTime.Now >= destTime; } }
-        
-        private Point startPoint;
-	    private DateTime startTime;
-	    private Point destPoint;
-	    private DateTime destTime;
-
-        public CardAnimationView(Card c, double delay, double duration, Point start, Point end, int width, int height)
-        {
-            Card = c;
-            startPoint = start;
-            destPoint = end;
-            startTime = DateTime.Now.AddSeconds(delay);
-            destTime = startTime.AddSeconds(duration);
-            CurrentRect = new Rectangle(startPoint.X, startPoint.Y, width, height);
-
-            Update();
-        }
-
-        public bool Update()
-        {
-            TimeSpan elapsed = DateTime.Now - startTime;
-            TimeSpan duration = destTime - startTime;
-            bool running = (elapsed <= duration);
-            if (elapsed < TimeSpan.Zero)
-                elapsed = TimeSpan.Zero;
-            if (elapsed > duration)
-                elapsed = duration;
-
-            double tfactor = elapsed.TotalSeconds / duration.TotalSeconds;
-            Point currentPoint = new Point(
-                (int)((destPoint.X - startPoint.X) * tfactor + startPoint.X),
-                (int)((destPoint.Y - startPoint.Y) * tfactor + startPoint.Y));
-            CurrentRect = new Rectangle(currentPoint.X, currentPoint.Y, CurrentRect.Width, CurrentRect.Height);
-            Card.View.Rect = CurrentRect;
-            return running;
-        }
-
-        public void Render(SpriteBatch batch)
-        {
-            Card.View.Render(batch);
-        }
-    }
-
-    class RocketPuff
-    {
-        private Rectangle rect;
-        private Texture2D tex;
-        private float alpha;
-        private float scaleFactor;
-        private DateTime startTime;
-        
-        const float duration = 0.6f;
-
-        public RocketPuff(Rectangle rect, float scale, Texture2D tex)
-        {
-            this.rect = rect;
-            this.tex = tex;
-            alpha = 1.0f;
-            scaleFactor = scale;
-            startTime = DateTime.Now;
-        }
-
-        public bool Update()
-        {
-	        double t = (DateTime.Now - startTime).TotalSeconds;
-	        alpha = (float)(1.0 - t / duration);
-	        double currentScale = 1.0 + (t / duration) * (scaleFactor - 1.0);
-	        int size = (int)(20 * currentScale);
-            Point center = new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
-	        rect = new Rectangle(center.X - size / 2, center.Y - size / 2, size, size);
-	        if (t > duration)
-		        return false;
-	        return true;
-        }
-
-        public void Render(SpriteBatch batch)
-        {
-            batch.Begin();
-            batch.Draw(tex, rect, Color.Multiply(Color.White, alpha));
-            batch.End();
-        }
-    }
-
-    class Particle
-    {
-        protected Vector2 pos;
-        protected Vector2 size;
-        protected Vector2 vel;
-        protected Vector2 accel;
-        protected float friction;
-        protected Color startColor;
-        protected Color endColor;
-        protected Texture2D tex;
-        protected float lifespan;
-
-        bool alive;
-        DateTime startTime;
-        DateTime lastUpdateTime;
-        Color currentColor;
-
-        public Particle(Vector2 pos, Vector2 size, Vector2 vel, Vector2 accel, float friction, Color startColor, Color endColor, Texture2D tex, float lifespan)
-        {
-            this.pos = pos;
-            this.size = size;
-            this.vel = vel;
-            this.accel = accel;
-            this.friction = friction;
-            this.startColor = startColor;
-            this.endColor = endColor;
-            this.tex = tex;
-            this.lifespan = lifespan;
-
-            this.alive = true;
-            this.startTime = DateTime.Now;
-            this.lastUpdateTime = DateTime.Now;
-            this.currentColor = this.startColor;
-        }
-
-        public bool Update()
-        {
-            if (!alive)
-                return false;
-
-            double t = (DateTime.Now - startTime).TotalSeconds;
-            double percent = (t / lifespan);
-            double delta = (DateTime.Now - lastUpdateTime).TotalSeconds;
-
-            pos += vel * (float)delta;
-            vel += accel * (float)delta;
-            vel *= 1 - Math.Min(friction * (float)delta, 1.0f);
-
-            currentColor = new Color((endColor.ToVector4() - startColor.ToVector4()) * (float)percent + startColor.ToVector4());
-            lastUpdateTime = DateTime.Now;
-
-            if (t > lifespan)
-                alive = false;
-            return alive;
-        }
-
-        public void Render(SpriteBatch batch)
-        {
-            if (alive)
-            {
-                Rectangle rect = new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y);
-                batch.Draw(tex, rect, currentColor);
-            }
-        }
-    }
-
-    class Firework : Particle
-    {
-        public Firework(Vector2 pos, Vector2 size, Vector2 vel, Vector2 accel, float friction, Color startColor, Color endColor, Texture2D tex, float lifespan) :
-            base(pos, size, vel, accel, friction, startColor, endColor, tex, lifespan)
-        {
-        }
-
-        public Vector2 Position { get { return pos; } }
-    }
-
-    class FireworkParticle : Particle
-    {
-        public FireworkParticle(Vector2 pos, Vector2 size, Vector2 vel, Vector2 accel, float friction, Color startColor, Color endColor, Texture2D tex, float lifespan) :
-            base(pos, size, vel, accel, friction, startColor, endColor, tex, lifespan)
-        {
-        }
-    }
+	internal delegate void AnimationCompleteCallback(Animation animation);
+
+	internal abstract class Animation
+	{
+		public abstract bool Update();
+		public abstract void Render(SpriteBatch batch);
+
+		public AnimationCompleteCallback OnAnimationCompleted;
+	}
+
+	internal class DealAnimation : Animation
+	{
+		private Board _board;
+		private readonly List<CardAnimationView> _cardAnimations;
+		private readonly DateTime _stopTime;
+
+		public DealAnimation(Board board, List<Card> cardsToDeal)
+		{
+			_board = board;
+
+			_cardAnimations = new List<CardAnimationView>(Board.StackCount);
+
+			// TODO: Revive this rule at some point?
+			/*int cardCount = 0;
+			int stacksEmpty = 0;
+			for (int i = 0; i < Board.StackCount; i++)
+			{
+				int stackSize = board.GetStack(i).Count;
+				if (stackSize == 0)
+					stacksEmpty++;
+				cardCount += stackSize;
+			}
+
+			if (stacksEmpty > 0 && cardCount >= Board.StackCount)
+			{
+				string errorMsg = CardResources.Strings.GetString("EmptyStacksDealError");
+				_board.View.AddError(errorMsg);
+				return;
+			}*/
+
+			int dealPos = board.CountOfExtraDealingsLeft() - 1;
+
+			const double delay = 0.1;
+			const double duration = 0.2;
+
+			var bounds = board.View.GetViewArea();
+			var cardSize = board.View.GetCardSize();
+			var startPoint = new Point(bounds.Width - cardSize.X - dealPos*25, bounds.Height - cardSize.Y);
+
+			for (int i = 0; i < cardsToDeal.Count; i++)
+			{
+				Card cardDealt = cardsToDeal[i];
+				cardDealt.Reveal();
+				cardDealt.View.Animating = true;
+
+				Point destPoint = board.View.GetLocationOfCardInStack(board.GetStack(i), board.GetStack(i).Count);
+				var animation = new CardAnimationView(cardDealt, i*delay, duration, startPoint, destPoint, cardSize.X,
+					cardSize.Y);
+				_cardAnimations.Insert(0, animation);
+			}
+
+			_stopTime = DateTime.Now.AddSeconds(cardsToDeal.Count*delay + duration);
+			UpdateCardAnimations();
+		}
+
+		public override bool Update()
+		{
+			return UpdateCardAnimations();
+		}
+
+		private bool UpdateCardAnimations()
+		{
+			foreach (var animation in _cardAnimations)
+				animation.Update();
+
+			if (_stopTime <= DateTime.Now || _cardAnimations.Count == 0)
+			{
+				foreach (var animation in _cardAnimations)
+					animation.Card.View.Animating = false;
+				return false;
+			}
+			return true;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			foreach (var animation in _cardAnimations)
+				animation.Render(batch);
+		}
+	}
+
+	internal class StackExpandAnimation : Animation
+	{
+		public List<CardAnimationView> CardAnimations;
+
+		private readonly Board _board;
+		private readonly DateTime _startTime;
+		private readonly DateTime _stopTime;
+
+		private const double Duration = 0.2;
+		private const int CardsPerRow = 6;
+
+		public StackExpandAnimation(Board board, CardStack stack, Point ptExpand)
+		{
+			_board = board;
+
+			_startTime = DateTime.Now;
+
+			var cardsInStack = stack.GetCards();
+			int top = stack.GetTopOfSequentialRun();
+			cardsInStack.RemoveRange(0, top);
+
+			int rows = (cardsInStack.Count + (CardsPerRow - 1))/CardsPerRow;
+			int cols = (cardsInStack.Count < CardsPerRow ? cardsInStack.Count : CardsPerRow);
+
+			var bounds = board.View.GetViewArea();
+			var cardSize = board.View.GetCardSize();
+			int spacing = (bounds.Width - cardSize.X*CardsPerRow)/(CardsPerRow - 1);
+			spacing = Math.Min(spacing, 10);
+
+			int xAnchor = ptExpand.X - cols/2*cardSize.X - (cols - 1)/2*spacing;
+			xAnchor = Math.Max(xAnchor, 0); // Left edge collision
+			xAnchor = Math.Min(xAnchor, bounds.Width - cardSize.X*cols - spacing*(cols - 1)); // Right edge collision
+			int yAnchor = ptExpand.Y - cardSize.Y/2;
+			yAnchor = Math.Max(yAnchor, 0); // Top edge collision
+			yAnchor = Math.Min(yAnchor, bounds.Height - cardSize.Y*rows - spacing*(rows - 1)); // Bottom edge collision
+
+			CardAnimations = new List<CardAnimationView>(cardsInStack.Count);
+			for (int i = 0; i < cardsInStack.Count; i++)
+			{
+				var card = cardsInStack[i];
+				card.View.Animating = true;
+				var startPoint = board.View.GetLocationOfCardInStack(stack, i + top);
+
+				int row = i/CardsPerRow;
+				int col = i%CardsPerRow;
+
+				int x = xAnchor + (cardSize.X + spacing)*col;
+				int y = yAnchor + (cardSize.Y + spacing)*row;
+				var destPoint = new Point(x, y);
+
+				var animation = new CardAnimationView(card, 0, Duration, startPoint, destPoint, cardSize.X, cardSize.Y);
+				CardAnimations.Add(animation);
+			}
+
+			_stopTime = DateTime.Now.AddSeconds(Duration);
+			UpdateCardAnimations();
+		}
+
+		public override bool Update()
+		{
+			return UpdateCardAnimations();
+		}
+
+		private bool UpdateCardAnimations()
+		{
+			foreach (var animation in CardAnimations)
+				animation.Update();
+
+			if (_stopTime <= DateTime.Now)
+			{
+				foreach (var animation in CardAnimations)
+					animation.Card.View.Animating = false;
+				return false;
+			}
+			return true;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			var elapsed = DateTime.Now - _startTime;
+			var duration = _stopTime - _startTime;
+			if (elapsed > duration)
+				elapsed = duration;
+
+			double tfactor = elapsed.TotalSeconds/duration.TotalSeconds;
+
+			byte alpha = (byte) (128*tfactor);
+			batch.Begin();
+			batch.Draw(CardResources.BlankTex, _board.View.GetViewArea(), new Color(0, 0, 0, alpha));
+			batch.End();
+
+			foreach (var animation in CardAnimations)
+				animation.Render(batch);
+		}
+	}
+
+	internal class StackCollapseAnimation : Animation
+	{
+		private readonly Board _board;
+		private readonly List<CardAnimationView> _cardAnimations;
+		private readonly DateTime _startTime;
+		private readonly DateTime _stopTime;
+
+		private const double Duration = 0.2;
+
+		public StackCollapseAnimation(Board board, int stack, List<CardAnimationView> expandedCards)
+		{
+			_board = board;
+
+			_startTime = DateTime.Now;
+
+			var cardSize = board.View.GetCardSize();
+			int stackBase = board.GetStack(stack).Count - expandedCards.Count;
+
+			_cardAnimations = new List<CardAnimationView>(expandedCards.Count);
+			for (int i = 0; i < expandedCards.Count; i++)
+			{
+				var card = expandedCards[i].Card;
+				card.View.Animating = true;
+
+				var destPoint = board.View.GetLocationOfCardInStack(board.GetStack(stack), i + stackBase);
+
+				var animation = new CardAnimationView(card, 0, Duration, expandedCards[i].CurrentRect.Location,
+					destPoint, cardSize.X, cardSize.Y);
+				_cardAnimations.Add(animation);
+			}
+
+			_stopTime = DateTime.Now.AddSeconds(Duration);
+			UpdateCardAnimations();
+		}
+
+		public override bool Update()
+		{
+			return UpdateCardAnimations();
+		}
+
+		private bool UpdateCardAnimations()
+		{
+			foreach (var animation in _cardAnimations)
+				animation.Update();
+
+			if (_stopTime <= DateTime.Now)
+			{
+				foreach (var animation in _cardAnimations)
+					animation.Card.View.Animating = false;
+				return false;
+			}
+			return true;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			var elapsed = DateTime.Now - _startTime;
+			var duration = _stopTime - _startTime;
+			if (elapsed > duration)
+				elapsed = duration;
+
+			double tfactor = 1 - elapsed.TotalSeconds/duration.TotalSeconds;
+
+			byte alpha = (byte) (128*tfactor);
+			batch.Begin();
+			batch.Draw(CardResources.BlankTex, _board.View.GetViewArea(), new Color(0, 0, 0, alpha));
+			batch.End();
+
+			foreach (var animation in _cardAnimations)
+				animation.Render(batch);
+		}
+	}
+
+	internal class ClearRunAnimation : Animation
+	{
+		public int Stack { get; set; }
+		private readonly List<CardAnimationView> _cardAnimations;
+		private readonly List<CardAnimationView> _completedAnimations;
+		private readonly DateTime _stopTime;
+
+		private const double Delay = 0.1;
+		private const double Duration = 0.1;
+
+		public ClearRunAnimation(Board board, int stack, Point destPoint)
+		{
+			Stack = stack;
+
+			var cardSize = board.View.GetCardSize();
+			int stackSize = board.GetStack(stack).Count;
+
+			_cardAnimations = new List<CardAnimationView>(13);
+			for (int i = 0; i < 13; i++)
+			{
+				int pos = stackSize - 13 + i;
+				var card = board.GetStack(stack).GetCard(pos);
+				card.View.Animating = true;
+				var startPoint = board.View.GetLocationOfCardInStack(board.GetStack(stack), pos);
+
+				var animation = new CardAnimationView(card, (13 - i)*Delay, Duration, startPoint, destPoint, cardSize.X, cardSize.Y);
+				_cardAnimations.Add(animation);
+			}
+
+			_stopTime = DateTime.Now.AddSeconds(13*Delay + Duration);
+			_completedAnimations = new List<CardAnimationView>(13);
+			UpdateCardAnimations();
+		}
+
+		public override bool Update()
+		{
+			return UpdateCardAnimations();
+		}
+
+		private bool UpdateCardAnimations()
+		{
+			var newlyCompletedAnimations = new List<CardAnimationView>();
+			foreach (CardAnimationView animation in _cardAnimations)
+			{
+				if (animation.Update() == false)
+					newlyCompletedAnimations.Add(animation);
+			}
+			foreach (var animation in newlyCompletedAnimations)
+				_cardAnimations.Remove(animation);
+			_completedAnimations.AddRange(newlyCompletedAnimations);
+
+			if (_stopTime <= DateTime.Now)
+			{
+				foreach (var animation in _cardAnimations)
+					animation.Card.View.Animating = false;
+				return false;
+			}
+			return true;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			foreach (var animation in _completedAnimations)
+				animation.Render(batch);
+			foreach (var animation in _cardAnimations)
+				animation.Render(batch);
+		}
+	}
+
+	internal class ShowMoveAnimation : Animation
+	{
+		public ShowMoveAnimation(Board board, int stackSrc, int stackDest)
+		{
+			Update();
+		}
+
+		public override bool Update()
+		{
+			return false;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+		}
+	}
+
+	internal class WinAnimation : Animation
+	{
+		private readonly Animation _winAnimation;
+
+		public WinAnimation(Board board)
+		{
+			var r = new Random();
+			if (r.Next()%2 == 0)
+				_winAnimation = new RocketWinAnimation(board);
+			else
+				_winAnimation = new FireworksWinAnimation(board);
+
+			Update();
+		}
+
+		public override bool Update()
+		{
+			return _winAnimation.Update();
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			_winAnimation.Render(batch);
+		}
+	}
+
+	internal class RocketWinAnimation : Animation
+	{
+		private readonly Board _board;
+		private readonly DateTime _startTime;
+
+		private readonly Random _random;
+		private readonly int _radius;
+		private Rectangle _rocketRect;
+		private float _rocketRot;
+
+		private readonly List<RocketPuff> _rocketPuffs;
+		private DateTime _nextPuffTime = DateTime.MinValue;
+
+		private const float RocketDuration = 4.0f;
+		private const float MinPuffDelay = 0.04f;
+		private const float MaxPuffDelay = 0.12f;
+		private const float PuffScale = 1.5f;
+					
+		public RocketWinAnimation(Board board)
+		{
+			_board = board;
+
+			_startTime = DateTime.Now;
+			_random = new Random();
+			_rocketPuffs = new List<RocketPuff>(20);
+
+			Rectangle bounds = board.View.GetViewArea();
+			_radius = (int) (Math.Min(bounds.Height, bounds.Width/2)*0.9);
+			Update();
+		}
+
+		public override bool Update()
+		{
+			var elapsed = DateTime.Now - _startTime;
+
+			var invisiblePuffs = new List<RocketPuff>(_rocketPuffs.Count);
+			foreach (RocketPuff puff in _rocketPuffs)
+			{
+				if (!puff.Update())
+					invisiblePuffs.Add(puff);
+			}
+			foreach (var puff in invisiblePuffs)
+				_rocketPuffs.Remove(puff);
+
+			if (elapsed.TotalSeconds < RocketDuration)
+			{
+				var bounds = _board.View.GetViewArea();
+				double theta = Math.PI*(elapsed.TotalSeconds/RocketDuration);
+				int x = (int) (Math.Cos(theta)*_radius + bounds.Width/2.0f);
+				int y = bounds.Height - (int) (Math.Sin(theta)*_radius) + 60;
+
+				_rocketRect = new Rectangle(x, y, 60, 60);
+				_rocketRot = -(float) theta;
+
+				if (DateTime.Now > _nextPuffTime)
+				{
+					theta = Math.PI*((elapsed.TotalSeconds - 0.1)/RocketDuration);
+					x = (int) (Math.Cos(theta)*_radius + bounds.Width/2.0f) - 10;
+					y = bounds.Height - (int) (Math.Sin(theta)*_radius) - 10 + 60;
+
+					var rect = new Rectangle(x, y, 20, 20);
+					var puff = new RocketPuff(rect, PuffScale, CardResources.PuffTex[_random.Next(CardResources.PuffTex.Count)]);
+					_rocketPuffs.Add(puff);
+
+					_nextPuffTime = DateTime.Now.AddSeconds(_random.NextDouble()*(MaxPuffDelay - MinPuffDelay) + MinPuffDelay);
+				}
+			}
+
+			if (elapsed.TotalSeconds >= RocketDuration && _rocketPuffs.Count == 0)
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			foreach (var puff in _rocketPuffs)
+				puff.Render(batch);
+
+			var origin = new Vector2(CardResources.RocketTex.Width/2.0f, CardResources.RocketTex.Height/2.0f);
+			batch.Begin();
+			batch.Draw(CardResources.RocketTex, _rocketRect, CardResources.RocketTex.Bounds, Color.White, _rocketRot, origin,
+				SpriteEffects.None, 0);
+			batch.End();
+		}
+	}
+
+	internal sealed class FireworksWinAnimation : Animation
+	{
+		private readonly Board _board;
+
+		private readonly Random _random;
+		private Firework _firework;
+		private readonly List<FireworkParticle> _particles;
+
+		private readonly Color[] _fireworkColors = {Color.Red, Color.Blue, Color.White, Color.Purple};
+
+		private const int ParticlesPerFirework = 300;
+		private readonly Vector2 _fireworkVelocity = new Vector2(0, -40);
+		private readonly Vector2 _fireworkAccel = new Vector2(0, -120);
+		private const float FireworkLifespan = 2.0f;
+		private readonly Vector2 _fireworkSize = new Vector2(40, 40);
+
+		private const float FireworkParticleStartVelocity = 450.0f;
+		private const float FireworkParticleFriction = 2.5f;
+		private readonly Vector2 _fireworkParticleSize = new Vector2(20, 20);
+		private const float ParticleLifespan = 1.8f;
+		private readonly Vector2 _fireworkParticleGravity = new Vector2(0, 60);
+
+		public FireworksWinAnimation(Board board)
+		{
+			_board = board;
+
+			_random = new Random();
+			_particles = new List<FireworkParticle>(ParticlesPerFirework);
+
+			Update();
+		}
+
+		public override bool Update()
+		{
+			// Launch firework
+			if (_firework == null && _particles.Count == 0)
+			{
+				Rectangle viewRect = _board.View.GetViewArea();
+
+				_firework = new Firework(new Vector2(viewRect.Width/2.0f - _fireworkSize.X/2, viewRect.Height), _fireworkSize,
+					_fireworkVelocity, _fireworkAccel, 0.0f, Color.White, Color.White, CardResources.RocketTex, FireworkLifespan);
+			}
+
+			// Explode firework
+			if (_firework != null)
+			{
+				if (!_firework.Update())
+				{
+					var color = _fireworkColors[_random.Next(_fireworkColors.Length)];
+					var endColor = Color.Multiply(color, 0.3f);
+					var tex = CardResources.FireworkParticleTex[_random.Next(2)];
+					for (int i = 0; i < ParticlesPerFirework; i++)
+					{
+						double theta = _random.NextDouble()*Math.PI*2.0;
+						double velMult = _random.NextDouble();
+						var vel = new Vector2((float) Math.Cos(theta), (float) Math.Sin(theta)) * FireworkParticleStartVelocity * (float)velMult;
+
+						var particle = new FireworkParticle(_firework.Position, _fireworkParticleSize, vel, _fireworkParticleGravity, FireworkParticleFriction, color, endColor, tex, ParticleLifespan);
+						_particles.Add(particle);
+					}
+
+					_firework = null;
+				}
+			}
+
+			// Dead particles stay in the list - too much work to remove the dead ones every update
+			bool someParticlesAlive = false;
+			foreach (var particle in _particles)
+				someParticlesAlive |= particle.Update();
+
+			if (_firework == null && !someParticlesAlive)
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public override void Render(SpriteBatch batch)
+		{
+			batch.Begin();
+
+			if (_firework != null)
+				_firework.Render(batch);
+
+			foreach (var particle in _particles)
+				particle.Render(batch);
+
+			batch.End();
+		}
+	}
+
+	internal class CardAnimationView
+	{
+		public Card Card { get; private set; }
+		public Rectangle CurrentRect { get; private set; }
+
+		public bool Started
+		{
+			get { return DateTime.Now >= _startTime; }
+		}
+
+		public bool Completed
+		{
+			get { return DateTime.Now >= _destTime; }
+		}
+
+		private Point _startPoint;
+		private readonly DateTime _startTime;
+		private Point _destPoint;
+		private readonly DateTime _destTime;
+
+		public CardAnimationView(Card c, double delay, double duration, Point start, Point end, int width, int height)
+		{
+			Card = c;
+			_startPoint = start;
+			_destPoint = end;
+			_startTime = DateTime.Now.AddSeconds(delay);
+			_destTime = _startTime.AddSeconds(duration);
+			CurrentRect = new Rectangle(_startPoint.X, _startPoint.Y, width, height);
+
+			Update();
+		}
+
+		public bool Update()
+		{
+			var elapsed = DateTime.Now - _startTime;
+			var duration = _destTime - _startTime;
+			bool running = (elapsed <= duration);
+			if (elapsed < TimeSpan.Zero)
+				elapsed = TimeSpan.Zero;
+			if (elapsed > duration)
+				elapsed = duration;
+
+			double tfactor = elapsed.TotalSeconds/duration.TotalSeconds;
+			var currentPoint = new Point(
+				(int) ((_destPoint.X - _startPoint.X)*tfactor + _startPoint.X),
+				(int) ((_destPoint.Y - _startPoint.Y)*tfactor + _startPoint.Y));
+			CurrentRect = new Rectangle(currentPoint.X, currentPoint.Y, CurrentRect.Width, CurrentRect.Height);
+			Card.View.Rect = CurrentRect;
+			return running;
+		}
+
+		public void Render(SpriteBatch batch)
+		{
+			Card.View.Render(batch);
+		}
+	}
+
+	internal class RocketPuff
+	{
+		private Rectangle _rect;
+		private readonly Texture2D _tex;
+		private float _alpha;
+		private readonly float _scaleFactor;
+		private readonly DateTime _startTime;
+
+		private const float Duration = 0.6f;
+
+		public RocketPuff(Rectangle rect, float scale, Texture2D tex)
+		{
+			_rect = rect;
+			_tex = tex;
+			_alpha = 1.0f;
+			_scaleFactor = scale;
+			_startTime = DateTime.Now;
+		}
+
+		public bool Update()
+		{
+			double t = (DateTime.Now - _startTime).TotalSeconds;
+			_alpha = (float) (1.0 - t/Duration);
+			double currentScale = 1.0 + (t/Duration)*(_scaleFactor - 1.0);
+			int size = (int) (20*currentScale);
+			var center = new Point(_rect.X + _rect.Width/2, _rect.Y + _rect.Height/2);
+			_rect = new Rectangle(center.X - size/2, center.Y - size/2, size, size);
+			if (t > Duration)
+				return false;
+			return true;
+		}
+
+		public void Render(SpriteBatch batch)
+		{
+			batch.Begin();
+			batch.Draw(_tex, _rect, Color.Multiply(Color.White, _alpha));
+			batch.End();
+		}
+	}
+
+	internal class Particle
+	{
+		protected Vector2 Pos;
+		protected Vector2 Size;
+		protected Vector2 Vel;
+		protected Vector2 Accel;
+		protected float Friction;
+		protected Color StartColor;
+		protected Color EndColor;
+		protected Texture2D Tex;
+		protected float Lifespan;
+
+		private bool _alive;
+		private readonly DateTime _startTime;
+		private DateTime _lastUpdateTime;
+		private Color _currentColor;
+
+		public Particle(Vector2 pos, Vector2 size, Vector2 vel, Vector2 accel, float friction, Color startColor,
+			Color endColor, Texture2D tex, float lifespan)
+		{
+			Pos = pos;
+			Size = size;
+			Vel = vel;
+			Accel = accel;
+			Friction = friction;
+			StartColor = startColor;
+			EndColor = endColor;
+			Tex = tex;
+			Lifespan = lifespan;
+
+			_alive = true;
+			_startTime = DateTime.Now;
+			_lastUpdateTime = DateTime.Now;
+			_currentColor = StartColor;
+		}
+
+		public bool Update()
+		{
+			if (!_alive)
+				return false;
+
+			double t = (DateTime.Now - _startTime).TotalSeconds;
+			double percent = (t/Lifespan);
+			double delta = (DateTime.Now - _lastUpdateTime).TotalSeconds;
+
+			Pos += Vel*(float) delta;
+			Vel += Accel*(float) delta;
+			Vel *= 1 - Math.Min(Friction*(float) delta, 1.0f);
+
+			_currentColor = new Color((EndColor.ToVector4() - StartColor.ToVector4())*(float) percent + StartColor.ToVector4());
+			_lastUpdateTime = DateTime.Now;
+
+			if (t > Lifespan)
+				_alive = false;
+			return _alive;
+		}
+
+		public void Render(SpriteBatch batch)
+		{
+			if (_alive)
+			{
+				var rect = new Rectangle((int) Pos.X, (int) Pos.Y, (int) Size.X, (int) Size.Y);
+				batch.Draw(Tex, rect, _currentColor);
+			}
+		}
+	}
+
+	internal class Firework : Particle
+	{
+		public Firework(Vector2 pos, Vector2 size, Vector2 vel, Vector2 accel, float friction, Color startColor, Color endColor, Texture2D tex, float lifespan) :
+			base(pos, size, vel, accel, friction, startColor, endColor, tex, lifespan)
+		{
+		}
+
+		public Vector2 Position
+		{
+			get { return Pos; }
+		}
+	}
+
+	internal class FireworkParticle : Particle
+	{
+		public FireworkParticle(Vector2 pos, Vector2 size, Vector2 vel, Vector2 accel, float friction, Color startColor, Color endColor, Texture2D tex, float lifespan) :
+			base(pos, size, vel, accel, friction, startColor, endColor, tex, lifespan)
+		{
+		}
+	}
 }
