@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SpiderGame xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Suits="1" MoveCount="0" Score="500">
+  <Board>
+    <Stacks>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="1" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="2" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="2" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="2" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+          <CardSerialization Value="4" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+          <CardSerialization Value="2" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="7" Suit="0" Visible="true" />
+        </Cards>
+      </CardStackSerialization>
+    </Stacks>
+    <Extras>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="2" Suit="0" Visible="false" />
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="10" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="11" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="4" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+          <CardSerialization Value="2" Suit="0" Visible="false" />
+          <CardSerialization Value="3" Suit="0" Visible="false" />
+          <CardSerialization Value="8" Suit="0" Visible="false" />
+          <CardSerialization Value="12" Suit="0" Visible="false" />
+          <CardSerialization Value="1" Suit="0" Visible="false" />
+          <CardSerialization Value="7" Suit="0" Visible="false" />
+        </Cards>
+      </CardStackSerialization>
+      <CardStackSerialization>
+        <Cards>
+          <CardSerialization Value="2" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="5" Suit="0" Visible="false" />
+          <CardSerialization Value="0" Suit="0" Visible="false" />
+          <CardSerialization Value="2" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="6" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+          <CardSerialization Value="9" Suit="0" Visible="false" />
+        </Cards>
+      </CardStackSerialization>
+    </Extras>
+    <Completed />
+  </Board>
+  <UndoStack>
+    <Actions />
+  </UndoStack>
+</SpiderGame>

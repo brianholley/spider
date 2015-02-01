@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" StatsVersion="1">
+  <TotalGames>1</TotalGames>
+  <EasyGames>1</EasyGames>
+  <MediumGames>0</MediumGames>
+  <HardGames>0</HardGames>
+  <TotalGamesWon>0</TotalGamesWon>
+  <EasyGamesWon>0</EasyGamesWon>
+  <MediumGamesWon>0</MediumGamesWon>
+  <HardGamesWon>0</HardGamesWon>
+  <TotalTimePlayed>1</TotalTimePlayed>
+</Statistics>
