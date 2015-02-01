@@ -21,11 +21,11 @@ namespace Spider
 			// Frame rate is 30 fps by default for Windows Phone.
 			TargetElapsedTime = TimeSpan.FromTicks(333333);
 
-			PhoneApplicationService appService = PhoneApplicationService.Current;
-			appService.Launching += OnAppServiceLaunching;
-			appService.Activated += OnAppServiceActivated;
-			appService.Deactivated += OnAppServiceDeactivated;
-			appService.Closing += OnAppServiceClosing;
+			//PhoneApplicationService appService = PhoneApplicationService.Current;
+			//appService.Launching += OnAppServiceLaunching;
+			//appService.Activated += OnAppServiceActivated;
+			//appService.Deactivated += OnAppServiceDeactivated;
+			//appService.Closing += OnAppServiceClosing;
 		}
 
 		/// <summary>
@@ -61,29 +61,18 @@ namespace Spider
 		{
 		}
 
-		private void OnAppServiceLaunching(object sender, LaunchingEventArgs args)
+		protected override void OnActivated(object sender, EventArgs args)
 		{
 			LoadOnActivated();
 		}
 
-		private void OnAppServiceActivated(object sender, ActivatedEventArgs args)
-		{
-			if (!args.IsApplicationInstancePreserved)
-				LoadOnActivated();
-		}
-
-		private void OnAppServiceDeactivated(object sender, DeactivatedEventArgs args)
+		protected override void OnDeactivated(object sender, EventArgs args)
 		{
 			GameStateManager.CurrentState.Save();
 			if (GameStateManager.CurrentState.State() != GameState.Loading)
 			{
 				PhoneApplicationService.Current.State["GameState"] = GameStateManager.CurrentState.State();
 			}
-		}
-
-		private void OnAppServiceClosing(object sender, ClosingEventArgs args)
-		{
-			GameStateManager.CurrentState.Save();
 		}
 
 		protected void LoadOnActivated()
