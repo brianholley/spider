@@ -78,13 +78,17 @@ namespace Spider
 					break;
 			}
 
-			if (_running && !SendAnalytics(ev).Wait(30000))
+			Task.Run(() =>
 			{
-				lock (_eventQueue)
+				if (!_running || !SendAnalytics(ev).Wait(30000))
 				{
-					_eventQueue.Enqueue(ev);
+					lock (_eventQueue)
+					{
+						_eventQueue.Enqueue(ev);
+					}
 				}
-			}
+			});
+			
 		}
 
 		public static void RegisterException(Exception e)
