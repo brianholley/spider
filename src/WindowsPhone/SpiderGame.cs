@@ -64,10 +64,13 @@ namespace Spider
 		protected override void OnActivated(object sender, EventArgs args)
 		{
 			LoadOnActivated();
+			Analytics.RegisterEvent(Analytics.EventType.Boot, "");
 		}
 
 		protected override void OnDeactivated(object sender, EventArgs args)
 		{
+			Analytics.Shutdown();
+
 			GameStateManager.CurrentState.Save();
 			if (GameStateManager.CurrentState.State() != GameState.Loading)
 			{
