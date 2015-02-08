@@ -86,9 +86,9 @@ namespace Spider
 			Vector2 size = splashFont.MeasureString(loadingText);
 			loadingTextSize = new Point((int) size.X, (int) size.Y);
 
-			backgroundTex = GameStateManager.Content.Load<Texture2D>("SplashScreenLoad");
-			progressBarTex = GameStateManager.Content.Load<Texture2D>("ProgressBar");
-
+			backgroundTex = GameStateManager.Content.Load<Texture2D>("SplashScreen");
+			progressTex = GameStateManager.Content.Load<Texture2D>("SplashScreenLoad");
+			
 			contentTotal = 0;
 			contentLoaded = 0;
 
@@ -128,24 +128,19 @@ namespace Spider
 		public override void Render(SpriteBatch spriteBatch)
 		{
 			spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-			spriteBatch.DrawString(splashFont, loadingText,
-				new Vector2((GameStateManager.ViewRect.Width - loadingTextSize.X)/2,
-					GameStateManager.ViewRect.Height/4 - loadingTextSize.Y), Color.White);
+			
+			float aspect = (float) progressTex.Bounds.Width/progressTex.Bounds.Height;
+			int height = (int) (GameStateManager.ViewRect.Height*0.6);
+			int width = (int)(height*aspect); 
 
-			Rectangle progressRect = new Rectangle(GameStateManager.ViewRect.Width/4, GameStateManager.ViewRect.Height*3/4,
-				GameStateManager.ViewRect.Width/2, GameStateManager.ViewRect.Height/24);
-			spriteBatch.Draw(progressBarTex, progressRect, progressBarTex.Bounds, new Color(96, 96, 96));
+			Rectangle loadRect = new Rectangle(GameStateManager.ViewRect.Width/2 - width/2, GameStateManager.ViewRect.Height/2-height/2, width, height);
+			spriteBatch.Draw(backgroundTex, loadRect, Color.White);
 
 			float progress = (float) contentLoaded/(float) contentTotal;
-			progressRect.Width = (int) (progressRect.Width*progress);
-			Rectangle sourceRect = new Rectangle(progressBarTex.Bounds.X, progressBarTex.Bounds.Y,
-				(int) (progressBarTex.Bounds.Width*progress), progressBarTex.Bounds.Height);
-			spriteBatch.Draw(progressBarTex, progressRect, sourceRect, Color.White);
-
-			Rectangle loadRect = new Rectangle(GameStateManager.ViewRect.Width/3, GameStateManager.ViewRect.Height/3,
-				GameStateManager.ViewRect.Width/3, GameStateManager.ViewRect.Height/3);
-			Color loadImageColor = Color.White*progress;
-			spriteBatch.Draw(backgroundTex, loadRect, loadImageColor);
+			loadRect.Width = (int) (loadRect.Width * progress);
+			Rectangle sourceRect = new Rectangle(progressTex.Bounds.X, progressTex.Bounds.Y,
+				(int)(progressTex.Bounds.Width * progress), progressTex.Bounds.Height);
+			spriteBatch.Draw(progressTex, loadRect, sourceRect, Color.White);
 
 			spriteBatch.End();
 		}
@@ -190,7 +185,7 @@ namespace Spider
 		private string loadingText;
 		private Point loadingTextSize;
 		private Texture2D backgroundTex;
-		private Texture2D progressBarTex;
+		private Texture2D progressTex;
 		private int contentTotal;
 		private int contentLoaded;
 		private GameState nextGameState;
