@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -11,9 +11,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Xml.Serialization;
-using Microsoft.Phone.Reactive;
 
 namespace Spider
 {
@@ -47,7 +44,7 @@ namespace Spider
 				case EventType.Boot:
 					ev.Args["ec"] = "session";
 					ev.Args["av"] = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-					ev.Args["sr"] = (int)Application.Current.Host.Content.ActualWidth + "x" + (int)Application.Current.Host.Content.ActualHeight;
+					ev.Args["sr"] = GameStateManager.ViewRect.Width + "x" + GameStateManager.ViewRect.Height;
 					ev.Args["ul"] = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 					break;
 				case EventType.Shutdown:
@@ -140,7 +137,8 @@ namespace Spider
 					if (!_running)
 						return;
 
-					ev = _eventQueue.Dequeue();
+					if (_eventQueue.Count > 0)
+						ev = _eventQueue.Dequeue();
 					anyLeft = (_eventQueue.Count > 0);
 				}
 				if (ev != null && !SendAnalytics(ev).Wait(30000))
@@ -162,7 +160,7 @@ namespace Spider
 			args["tid"] = TrackingId;
 			args["cid"] = _clientGuid.ToString("D");
 
-			var uri = new Uri("www.google-analytics.com/collect");
+			var uri = new Uri("http://www.google-analytics.com/collect");
 			var request = WebRequest.CreateHttp(new Uri(uri, "?" + string.Join("&", args.Select(p => p.Key + "=" + p.Value))));
 
 			try
@@ -173,7 +171,7 @@ namespace Spider
 			}
 			catch (Exception e)
 			{
-				System.Diagnostics.Debug.WriteLine("Analytics send failed: {0}", e);
+				Debug.WriteLine("Analytics send failed: {0}", e);
 			}
 
 			return false;
@@ -206,7 +204,7 @@ namespace Spider
 			}
 			catch (Exception exc)
 			{
-				System.Diagnostics.Debug.WriteLine(exc);
+				Debug.WriteLine(exc);
 			}
 		}
 
@@ -222,7 +220,7 @@ namespace Spider
 				}
 
 				var isoFile = IsolatedStorageFile.GetUserStoreForApplication();
-				using (var stream = IsolatedStorageFile.GetUserStoreForApplication().OpenFile(Filename, FileMode.Open))
+				using (var stream = isoFile.OpenFile(Filename, FileMode.Create))
 				{
 					var serializer = new DataContractJsonSerializer(typeof(CachedAnalytics));
 					serializer.WriteObject(stream, cache);
@@ -230,7 +228,7 @@ namespace Spider
 			}
 			catch (Exception exc)
 			{
-				System.Diagnostics.Debug.WriteLine(exc);
+				Debug.WriteLine(exc);
 			}	
 		}
 

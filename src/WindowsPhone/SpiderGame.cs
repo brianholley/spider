@@ -41,6 +41,8 @@ namespace Spider
 			GameStateManager.ChangeGameState(GameState.Loading);
 
 			base.Initialize();
+
+			Analytics.RegisterEvent(Analytics.EventType.Boot, "");
 		}
 
 		/// <summary>
@@ -64,7 +66,6 @@ namespace Spider
 		protected override void OnActivated(object sender, EventArgs args)
 		{
 			LoadOnActivated();
-			Analytics.RegisterEvent(Analytics.EventType.Boot, "");
 		}
 
 		protected override void OnDeactivated(object sender, EventArgs args)
