@@ -75,26 +75,31 @@ namespace Spider
 			LoadVictoryResources(graphicsDevice, content, callback);
 		}
 
+		private static Texture2D LoadThemePackResource(ContentManager content, string resource)
+		{
+			return content.Load<Texture2D>(@"ThemePacks\" + Options.ThemePack + @"\" + resource);
+		}
+
 		public static void LoadCardResources(GraphicsDevice graphicsDevice, ContentManager content,
 			ContentLoadNotificationDelegate callback)
 		{
-			CardTex = content.Load<Texture2D>(@"Card\Card");
+			CardTex = LoadThemePackResource(content, @"Card\Card");
 			callback();
 
-			CardBackTex = content.Load<Texture2D>(@"Card\CardBack_White");
+			CardBackTex = LoadThemePackResource(content, @"Card\CardBack_White");
 			callback();
 
-			HighlightEndTex = content.Load<Texture2D>(@"Card\Highlight_End");
+			HighlightEndTex = LoadThemePackResource(content, @"Card\Highlight_End");
 			callback();
-			HightlightCenterTex = content.Load<Texture2D>(@"Card\Highlight_Center");
+			HightlightCenterTex = LoadThemePackResource(content, @"Card\Highlight_Center");
 			callback();
-			PlaceholderTex = content.Load<Texture2D>(@"Card\Placeholder");
+			PlaceholderTex = LoadThemePackResource(content, @"Card\Placeholder");
 			callback();
 
 			var suitTex = new List<Texture2D>(SuitNamesShort.Length);
 			foreach (string suit in SuitNamesShort)
 			{
-				suitTex.Add(content.Load<Texture2D>(@"Card\" + suit));
+				suitTex.Add(LoadThemePackResource(content, @"Card\" + suit));
 				callback();
 			}
 			SuitTex = suitTex;
@@ -102,7 +107,7 @@ namespace Spider
 			var valueTex = new List<Texture2D>(ValueNamesShort.Length);
 			foreach (string value in ValueNamesShort)
 			{
-				valueTex.Add(content.Load<Texture2D>(@"Card\" + value));
+				valueTex.Add(LoadThemePackResource(content, @"Card\" + value));
 				callback();
 			}
 			ValueTex = valueTex;
@@ -116,7 +121,7 @@ namespace Spider
 			BlankTex.SetData<Color>(new Color[] {Color.White});
 			callback();
 
-			UndoTex = content.Load<Texture2D>("Undo");
+			UndoTex = LoadThemePackResource(content, "Undo");
 			callback();
 		}
 

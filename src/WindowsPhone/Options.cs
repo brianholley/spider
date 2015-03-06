@@ -76,6 +76,12 @@ namespace Spider
 			set { _options.CardBackColor = value; }
 		}
 
+		public static string ThemePack
+		{
+			get { return _options.ThemePack; }
+			set { _options.ThemePack = value; }
+		}
+
 		private const string Filename = "Options.xml";
 		private static SerializedOptions _options;
 	}
@@ -83,8 +89,9 @@ namespace Spider
 	[XmlRootAttribute("Options")]
 	public class SerializedOptions
 	{
-		[XmlAttribute] public int OptionsVersion = 1;
+		[XmlAttribute] public int OptionsVersion = 2;
 
 		public Color CardBackColor = Color.CornflowerBlue;
+		public string ThemePack = "Original";
 	}
 }
