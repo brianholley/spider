@@ -450,6 +450,21 @@ namespace Spider
 		public Texture2D Texture { get; set; }
 	}
 
+	internal class CustomMenuButton : MenuButton
+	{
+		private readonly Action<SpriteBatch, Rectangle> _render;
+
+		public CustomMenuButton(Action<SpriteBatch, Rectangle> render)
+		{
+			_render = render;
+		}
+		public void Render(SpriteBatch batch)
+		{
+			if (_render != null)
+				_render(batch, Rect);
+		}
+	}
+
 	internal class MenuButtonAnimation
 	{
 		private const double duration = 0.3;
@@ -714,10 +729,11 @@ namespace Spider
 		private static SpriteFont titleFont;
 		private static SpriteFont itemFont;
 		private static Texture2D cardTex;
+		private static List<Tuple<Texture2D, Texture2D, Texture2D>> themeTextures;
 
 		public static int ContentCount()
 		{
-			return 3;
+			return 3 + themePacks.Length * 3;
 		}
 
 		public static void LoadContent(ContentManager content, ContentLoadNotificationDelegate callback)
@@ -726,18 +742,38 @@ namespace Spider
 			callback();
 			itemFont = content.Load<SpriteFont>(@"Menu\StatisticsFont");
 			callback();
-			cardTex = content.Load<Texture2D>(@"Card\CardBack_White");
+			cardTex = content.Load<Texture2D>(@"ThemePacks\Original\Card\CardBack_White");
 			callback();
+
+			themeTextures = new List<Tuple<Texture2D, Texture2D, Texture2D>>();
+			foreach (var themeInfo in themePacks)
+			{
+				var front = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\Card");
+				callback();
+				var value = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\A");
+				callback();
+				var suit = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\Spade");
+				callback();
+				themeTextures.Add(new Tuple<Texture2D, Texture2D, Texture2D>(front, value, suit));
+			}
 		}
 
 		private static Color[] deckColors = new Color[]
 		{Color.CornflowerBlue, Color.Crimson, Color.LightSlateGray, Color.Gold, Color.MediumPurple, Color.Silver};
 
+		private static Tuple<string, string>[] themePacks = new Tuple<string, string>[]
+		{
+			new Tuple<string, string>("Original", Strings.Options_OriginalTheme),
+			new Tuple<string, string>("Modern", Strings.Options_ModernTheme),
+		};
+
 		private Rectangle viewRect;
 		private List<MenuButton> labels = new List<MenuButton>();
 		private List<ImageMenuButton> deckColorButtons = new List<ImageMenuButton>();
+		private List<CustomMenuButton> themePackButtons = new List<CustomMenuButton>();
 
 		private int selectedDeckColor = 0;
+		private int selectedTheme = 0;
 
 		public OptionsView(Rectangle rc)
 		{
@@ -754,16 +790,25 @@ namespace Spider
 					break;
 				}
 			}
+
+			for (int i = 0; i < themePacks.Length; i++)
+			{
+				if (themePacks[i].Item1 == Options.ThemePack)
+				{
+					selectedTheme = i;
+					break;
+				}
+			}
 		}
 
 		protected void InitControls()
 		{
 			labels.Clear();
 
-			int x = 40;
-			int y = viewRect.Height/10;
+			int x = 20;
+			int y = 20;
 			int xSpacing = (int) (viewRect.Width/20);
-			int ySpacing = (int) (viewRect.Height*0.20);
+			int ySpacing = (int) (viewRect.Height/10);
 			int xMaxLabel = 0;
 
 			TextMenuButton titleLabel = new TextMenuButton() {Text = Strings.Options, Font = titleFont};
@@ -773,15 +818,18 @@ namespace Spider
 				xMaxLabel = titleLabel.Rect.Right;
 			labels.Add(titleLabel);
 
+			int cardHeight = (int)(viewRect.Width / 8);
+			int cardWidth = (int)(cardHeight * ((float)cardTex.Width / (float)cardTex.Height));
+			
+			y = (int)titleSize.Y;
+			
 			TextMenuButton deckColorLabel = new TextMenuButton() {Text = Strings.Options_DeckColorLabel, Font = itemFont};
 			Vector2 deckColorSize = deckColorLabel.Font.MeasureString(deckColorLabel.Text);
-			deckColorLabel.Rect = new Rectangle(x + xSpacing, y + ySpacing, (int) deckColorSize.X, (int) deckColorSize.Y);
+			deckColorLabel.Rect = new Rectangle(x, y + ySpacing + (int)(cardHeight - deckColorSize.Y) / 2, (int) deckColorSize.X, (int) deckColorSize.Y);
 			if (deckColorLabel.Rect.Right > xMaxLabel)
 				xMaxLabel = deckColorLabel.Rect.Right;
 			labels.Add(deckColorLabel);
 
-			int cardHeight = (int) (viewRect.Width/8);
-			int cardWidth = (int) (cardHeight*((float) cardTex.Width/(float) cardTex.Height));
 			for (int i = 0; i < deckColors.Length; i++)
 			{
 				ImageMenuButton button = new ImageMenuButton()
@@ -790,10 +838,64 @@ namespace Spider
 					ButtonClickDelegate = OnDeckColorClicked,
 					Color = deckColors[i]
 				};
-				button.Rect = new Rectangle(xMaxLabel - xSpacing + (cardWidth + xSpacing/2)*i, deckColorLabel.Rect.Bottom + 20,
+				button.Rect = new Rectangle(xMaxLabel - xSpacing + (cardWidth + xSpacing/2)*i, y + ySpacing,
 					cardWidth, cardHeight);
 				deckColorButtons.Add(button);
 			}
+
+			y = y + ySpacing + cardHeight;
+
+			TextMenuButton themeLabel = new TextMenuButton() { Text = Strings.Options_ThemeLabel, Font = itemFont };
+			Vector2 themeLabelSize = themeLabel.Font.MeasureString(themeLabel.Text);
+			themeLabel.Rect = new Rectangle(x, y + ySpacing + (int)(cardHeight - themeLabelSize.Y) / 2, (int)themeLabelSize.X, (int)themeLabelSize.Y);
+			if (themeLabel.Rect.Right > xMaxLabel)
+				xMaxLabel = themeLabel.Rect.Right;
+			labels.Add(themeLabel);
+
+			for (int i = 0; i < themePacks.Length; i++)
+			{
+				var front = themeTextures[i].Item1;
+				var value = themeTextures[i].Item2;
+				var suit = themeTextures[i].Item3;
+				var button = new CustomMenuButton((batch, rect) => { RenderCard(batch, rect, front, value, suit); })
+				{
+					ButtonClickDelegate = OnThemePackClicked,
+					Color = Color.White
+				};
+				button.Rect = new Rectangle(xMaxLabel - xSpacing + (cardWidth + xSpacing / 2) * i, y + ySpacing,
+					cardWidth, cardHeight);
+				themePackButtons.Add(button);
+			}
+		}
+
+		private void RenderCard(SpriteBatch batch, Rectangle rect, Texture2D frontTexture, Texture2D valueTexture, Texture2D suitTexture)
+		{
+			batch.Draw(frontTexture, rect, Color.White);
+
+			int valueWidth = rect.Width / 6 + 3;
+			int valueHeight = valueWidth * 55 / 45;
+			Rectangle numberRect = new Rectangle(rect.X + 5, rect.Y + 5, valueWidth, valueHeight);
+			batch.Draw(valueTexture, numberRect, Color.White);
+
+			Rectangle suitSmallRect = new Rectangle(numberRect.X + numberRect.Width, numberRect.Y, numberRect.Height,
+				numberRect.Height);
+			batch.Draw(suitTexture, suitSmallRect, Color.White);
+
+			Rectangle numberTexRect = valueTexture.Bounds;
+			Rectangle numberBottomRect = new Rectangle(rect.Right - numberRect.Width - 5, rect.Bottom - numberRect.Height - 5,
+				numberRect.Width, numberRect.Height);
+			batch.Draw(valueTexture, numberBottomRect, null, Color.White, 0.0f, Vector2.Zero,
+				SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
+
+			Rectangle suitTexRect = suitTexture.Bounds;
+			Rectangle suitBottomRect = new Rectangle(numberBottomRect.Left - suitSmallRect.Width,
+				rect.Bottom - suitSmallRect.Height - 5, suitSmallRect.Width, suitSmallRect.Height);
+			batch.Draw(suitTexture, suitBottomRect, null, Color.White, 0.0f, Vector2.Zero,
+				SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
+
+			Rectangle suitLargeRect = new Rectangle(rect.X + rect.Width / 6, rect.Y + rect.Height / 2 - (rect.Width / 3),
+				2 * rect.Width / 3, 2 * rect.Width / 3);
+			batch.Draw(suitTexture, suitLargeRect, Color.White);
 		}
 
 		public void Update()
@@ -805,6 +907,15 @@ namespace Spider
 				if (touchLoc.State == TouchLocationState.Released)
 				{
 					foreach (ImageMenuButton button in deckColorButtons)
+					{
+						if (button.Rect.Contains(pt))
+						{
+							if (button.ButtonClickDelegate != null)
+								button.ButtonClickDelegate(button);
+							break;
+						}
+					}
+					foreach (CustomMenuButton button in themePackButtons)
 					{
 						if (button.Rect.Contains(pt))
 						{
@@ -838,8 +949,8 @@ namespace Spider
 				batch.Draw(button.Texture, button.Rect, button.Color);
 			}
 
-			ImageMenuButton selectedButton = deckColorButtons[selectedDeckColor];
 			{
+				ImageMenuButton selectedButton = deckColorButtons[selectedDeckColor];
 				Rectangle overlayRect = new Rectangle(selectedButton.Rect.X, selectedButton.Rect.Y, selectedButton.Rect.Width,
 					selectedButton.Rect.Height);
 				overlayRect.Inflate(overlayRect.Width/12, overlayRect.Height/12);
@@ -849,6 +960,29 @@ namespace Spider
 					topRect.Height);
 				Rectangle centerRect = new Rectangle(overlayRect.Left, overlayRect.Top + topRect.Height, overlayRect.Width,
 					overlayRect.Height - topRect.Height*2);
+
+				batch.Draw(CardResources.HighlightEndTex, topRect, Color.White);
+				batch.Draw(CardResources.HighlightEndTex, bottomRect, null, Color.White, 0.0f, Vector2.Zero,
+					SpriteEffects.FlipVertically, 0.0f);
+				batch.Draw(CardResources.HightlightCenterTex, centerRect, Color.White);
+			}
+
+			foreach (var button in themePackButtons)
+			{
+				button.Render(batch);
+			}
+
+			{
+				CustomMenuButton selectedButton = themePackButtons[selectedTheme];
+				Rectangle overlayRect = new Rectangle(selectedButton.Rect.X, selectedButton.Rect.Y, selectedButton.Rect.Width,
+					selectedButton.Rect.Height);
+				overlayRect.Inflate(overlayRect.Width / 12, overlayRect.Height / 12);
+
+				Rectangle topRect = new Rectangle(overlayRect.Left, overlayRect.Top, overlayRect.Width, overlayRect.Y / 4);
+				Rectangle bottomRect = new Rectangle(overlayRect.Left, overlayRect.Bottom - topRect.Height, overlayRect.Width,
+					topRect.Height);
+				Rectangle centerRect = new Rectangle(overlayRect.Left, overlayRect.Top + topRect.Height, overlayRect.Width,
+					overlayRect.Height - topRect.Height * 2);
 
 				batch.Draw(CardResources.HighlightEndTex, topRect, Color.White);
 				batch.Draw(CardResources.HighlightEndTex, bottomRect, null, Color.White, 0.0f, Vector2.Zero,
@@ -867,6 +1001,16 @@ namespace Spider
 					selectedDeckColor = i;
 			}
 			Options.CardBackColor = deckColors[selectedDeckColor];
+		}
+
+		private void OnThemePackClicked(MenuButton button)
+		{
+			for (int i = 0; i < themePackButtons.Count; i++)
+			{
+				if (button == themePackButtons[i])
+					selectedTheme = i;
+			}
+			Options.ThemePack = themePacks[selectedTheme].Item1;
 		}
 
 		public void OnClose()

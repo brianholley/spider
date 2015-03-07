@@ -25,10 +25,6 @@ namespace Spider
 					_options = serializer.Deserialize(reader) as SerializedOptions;
 					reader.Close();
 				}
-				else
-				{
-					_options = new SerializedOptions();
-				}
 				return true;
 			}
 			catch (FileNotFoundException)
@@ -39,8 +35,12 @@ namespace Spider
 			catch (Exception exc)
 			{
 				System.Diagnostics.Debug.WriteLine(exc);
-				_options = new SerializedOptions();
 				return false;
+			}
+			finally
+			{
+				if (_options == null)
+					_options = new SerializedOptions();
 			}
 		}
 

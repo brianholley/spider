@@ -199,8 +199,20 @@ try again later.</value>
     <comment>Options Menu Item</comment>
   </data>
   <data name="Options_DeckColorLabel" xml:space="preserve">
-    <value>Deck Color</value>
-    <comment>Options - label for deck color</comment>
+    <value>Deck</value>
+    <comment>Options - label for deck backing</comment>
+  </data>
+  <data name="Options_ModernTheme" xml:space="preserve">
+    <value>Modern</value>
+    <comment>Modern theme name</comment>
+  </data>
+  <data name="Options_OriginalTheme" xml:space="preserve">
+    <value>Original</value>
+    <comment>Original theme name</comment>
+  </data>
+  <data name="Options_ThemeLabel" xml:space="preserve">
+    <value>Theme</value>
+    <comment>Options - label for theme pack</comment>
   </data>
   <data name="Resume" xml:space="preserve">
     <value>Resume</value>

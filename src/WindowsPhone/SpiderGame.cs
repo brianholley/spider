@@ -36,6 +36,8 @@ namespace Spider
 		/// </summary>
 		protected override void Initialize()
 		{
+			Options.Load();
+
 			GameStateManager.GraphicsDevice = GraphicsDevice;
 			GameStateManager.Content = Content;
 			GameStateManager.ChangeGameState(GameState.Loading);
