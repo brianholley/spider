@@ -232,6 +232,15 @@ namespace Spider {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dark.
+        /// </summary>
+        internal static string Options_DarkTheme {
+            get {
+                return ResourceManager.GetString("Options_DarkTheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deck.
         /// </summary>
         internal static string Options_DeckColorLabel {

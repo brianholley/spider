@@ -198,6 +198,10 @@ try again later.</value>
     <value>Options</value>
     <comment>Options Menu Item</comment>
   </data>
+  <data name="Options_DarkTheme" xml:space="preserve">
+    <value>Dark</value>
+    <comment>Dark theme name</comment>
+  </data>
   <data name="Options_DeckColorLabel" xml:space="preserve">
     <value>Deck</value>
     <comment>Options - label for deck backing</comment>

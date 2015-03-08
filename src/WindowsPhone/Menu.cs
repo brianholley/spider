@@ -765,6 +765,7 @@ namespace Spider
 		{
 			new Tuple<string, string>("Original", Strings.Options_OriginalTheme),
 			new Tuple<string, string>("Modern", Strings.Options_ModernTheme),
+			new Tuple<string, string>("Dark", Strings.Options_DarkTheme),
 		};
 
 		private Rectangle viewRect;
