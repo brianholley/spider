@@ -70,7 +70,7 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright (c) 2011 Brian Holley.
+        ///   Looks up a localized string similar to Copyright (c) 2015 Brian Holley.
         /// </summary>
         internal static string About_CopyrightInfo {
             get {
@@ -88,9 +88,7 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Segoe Print Copyright (c) 2011
-        ///Microsoft Corp, Ascender Corp
-        ///http://www.ascendercorp.com/xna.html.
+        ///   Looks up a localized string similar to Segoe Print.
         /// </summary>
         internal static string About_FontCopyrightInfo {
             get {
@@ -304,34 +302,16 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Easy (1 Suit) Games Won.
+        ///   Looks up a localized string similar to Games Won.
         /// </summary>
-        internal static string Stats_EasyGamesLabel {
+        internal static string Stats_GamesWon {
             get {
-                return ResourceManager.GetString("Stats_EasyGamesLabel", resourceCulture);
+                return ResourceManager.GetString("Stats_GamesWon", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hard (4 Suits) Games Won.
-        /// </summary>
-        internal static string Stats_HardGamesLabel {
-            get {
-                return ResourceManager.GetString("Stats_HardGamesLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Medium (2 Suits) Games Won.
-        /// </summary>
-        internal static string Stats_MediumGamesLabel {
-            get {
-                return ResourceManager.GetString("Stats_MediumGamesLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [Reset Statistics].
+        ///   Looks up a localized string similar to [Clear].
         /// </summary>
         internal static string Stats_ResetButton {
             get {
@@ -340,11 +320,11 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Games Won.
+        ///   Looks up a localized string similar to Games Played.
         /// </summary>
-        internal static string Stats_TotalGamesLabel {
+        internal static string Stats_TotalGames {
             get {
-                return ResourceManager.GetString("Stats_TotalGamesLabel", resourceCulture);
+                return ResourceManager.GetString("Stats_TotalGames", resourceCulture);
             }
         }
         
@@ -354,6 +334,15 @@ namespace Spider {
         internal static string Stats_TotalTimeLabel {
             get {
                 return ResourceManager.GetString("Stats_TotalTimeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Win Rate.
+        /// </summary>
+        internal static string Stats_WinRate {
+            get {
+                return ResourceManager.GetString("Stats_WinRate", resourceCulture);
             }
         }
     }

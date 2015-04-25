@@ -449,6 +449,13 @@ namespace Spider
 		public string Text { get; set; }
 		public SpriteFont Font { get; set; }
 		public float Rotation { get; set; }
+
+		public void CenterTextInRectangle(Rectangle rectCenter)
+		{
+			Vector2 size = Font.MeasureString(Text);
+			int offset = (rectCenter.Width - (int) size.X)/2;
+			Rect = new Rectangle(rectCenter.X + offset, rectCenter.Y, (int)size.X, (int)size.Y);
+		}
 	}
 
 	internal class ImageMenuButton : MenuButton
@@ -530,10 +537,11 @@ namespace Spider
 		private static SpriteFont titleFont;
 		private static SpriteFont itemFont;
 		private static SpriteFont resetFont;
+		private static Texture2D[] suitTextures = new Texture2D[4];
 
 		public static int ContentCount()
 		{
-			return 3;
+			return 7;
 		}
 
 		public static void LoadContent(ContentManager content, ContentLoadNotificationDelegate callback)
@@ -544,6 +552,13 @@ namespace Spider
 			callback();
 			resetFont = content.Load<SpriteFont>(@"Menu\MenuSubFont");
 			callback();
+
+			string[] suits = {"Spade", "Diamond", "Club", "Heart" };
+			for (int i = 0; i < suits.Length; i++)
+			{
+				suitTextures[i] = content.Load<Texture2D>(@"ThemePacks\Original\Card\" + suits[i]);
+				callback();
+			}
 		}
 
 		private Rectangle viewRect;
@@ -562,118 +577,140 @@ namespace Spider
 		{
 			labels.Clear();
 
-			int x = 40;
-			int y = viewRect.Height/10;
+			int x = 10;
+			int y = 10;
 			int xSpacing = (int) (viewRect.Width/20);
-			int ySpacing = (int) (viewRect.Height*0.1);
-			int xMaxLabel = 0;
+			int ySpacing = Math.Min(viewRect.Height / 20, 10);
+
+			int xStartTable = (int)(viewRect.Width*0.7);
+			int xTableSpacing = viewRect.Width/12;
 
 			TextMenuButton titleLabel = new TextMenuButton() {Text = Strings.Statistics, Font = titleFont};
 			Vector2 titleSize = titleLabel.Font.MeasureString(titleLabel.Text);
 			titleLabel.Rect = new Rectangle(x, y, (int) titleSize.X, (int) titleSize.Y);
-			if (titleLabel.Rect.Right > xMaxLabel)
-				xMaxLabel = titleLabel.Rect.Right;
 			labels.Add(titleLabel);
 
-			TextMenuButton totalGamesLabel = new TextMenuButton() {Text = Strings.Stats_TotalGamesLabel, Font = itemFont};
+			y += Math.Max((int)titleSize.Y, xTableSpacing) + ySpacing - xTableSpacing;
+
+			var easyHeaderIconSpade = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[0], rect, Color.White); });
+			easyHeaderIconSpade.Rect = new Rectangle(xStartTable + xTableSpacing / 4, y + xTableSpacing / 4, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(easyHeaderIconSpade);
+
+			var mediumHeaderIconSpade = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[0], rect, Color.White); });
+			mediumHeaderIconSpade.Rect = new Rectangle(xStartTable + xTableSpacing, y + xTableSpacing / 4, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(mediumHeaderIconSpade);
+
+			var mediumHeaderIconDiamond = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[1], rect, Color.White); });
+			mediumHeaderIconDiamond.Rect = new Rectangle(xStartTable + xTableSpacing + xTableSpacing / 2, y + xTableSpacing / 4, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(mediumHeaderIconDiamond);
+
+			var hardHeaderIconSpade = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[0], rect, Color.White); });
+			hardHeaderIconSpade.Rect = new Rectangle(xStartTable + xTableSpacing * 2, y, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(hardHeaderIconSpade);
+
+			var hardHeaderIconDiamond = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[1], rect, Color.White); });
+			hardHeaderIconDiamond.Rect = new Rectangle(xStartTable + xTableSpacing * 2 + xTableSpacing / 2, y, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(hardHeaderIconDiamond);
+
+			var hardHeaderIconClub = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[2], rect, Color.White); });
+			hardHeaderIconClub.Rect = new Rectangle(xStartTable + xTableSpacing * 2, y + xTableSpacing / 2, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(hardHeaderIconClub);
+
+			var hardHeaderIconHeart = new CustomMenuButton((btn, batch, rect) => { batch.Draw(suitTextures[3], rect, Color.White); });
+			hardHeaderIconHeart.Rect = new Rectangle(xStartTable + xTableSpacing * 2 + xTableSpacing / 2, y + xTableSpacing / 2, xTableSpacing / 2, xTableSpacing / 2);
+			labels.Add(hardHeaderIconHeart);
+
+			y += xTableSpacing;
+
+			TextMenuButton totalGamesLabel = new TextMenuButton() {Text = Strings.Stats_TotalGames, Font = itemFont};
 			Vector2 totalGamesSize = totalGamesLabel.Font.MeasureString(totalGamesLabel.Text);
-			totalGamesLabel.Rect = new Rectangle(x + xSpacing, y + ySpacing*2, (int) totalGamesSize.X, (int) totalGamesSize.Y);
-			if (totalGamesLabel.Rect.Right > xMaxLabel)
-				xMaxLabel = totalGamesLabel.Rect.Right;
+			totalGamesLabel.Rect = new Rectangle(x, y, (int) totalGamesSize.X, (int) totalGamesSize.Y);
 			labels.Add(totalGamesLabel);
 
-			TextMenuButton easyGamesLabel = new TextMenuButton() {Text = Strings.Stats_EasyGamesLabel, Font = itemFont};
-			Vector2 easyGamesSize = easyGamesLabel.Font.MeasureString(easyGamesLabel.Text);
-			easyGamesLabel.Rect = new Rectangle(x + xSpacing, y + ySpacing*3, (int) easyGamesSize.X, (int) easyGamesSize.Y);
-			if (easyGamesLabel.Rect.Right > xMaxLabel)
-				xMaxLabel = easyGamesLabel.Rect.Right;
-			labels.Add(easyGamesLabel);
+			{
+				TextMenuButton info = new TextMenuButton { Text = Statistics.EasyGames.ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+			{
+				TextMenuButton info = new TextMenuButton { Text = Statistics.MediumGames.ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable + xTableSpacing, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+			{
+				TextMenuButton info = new TextMenuButton { Text = Statistics.HardGames.ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable + xTableSpacing * 2, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
 
-			TextMenuButton mediumGamesLabel = new TextMenuButton() {Text = Strings.Stats_MediumGamesLabel, Font = itemFont};
-			Vector2 mediumGamesSize = mediumGamesLabel.Font.MeasureString(mediumGamesLabel.Text);
-			mediumGamesLabel.Rect = new Rectangle(x + xSpacing, y + ySpacing*4, (int) mediumGamesSize.X, (int) mediumGamesSize.Y);
-			if (mediumGamesLabel.Rect.Right > xMaxLabel)
-				xMaxLabel = mediumGamesLabel.Rect.Right;
-			labels.Add(mediumGamesLabel);
+			y += (int)totalGamesSize.Y + ySpacing;
 
-			TextMenuButton hardGamesLabel = new TextMenuButton() {Text = Strings.Stats_HardGamesLabel, Font = itemFont};
-			Vector2 hardGamesSize = hardGamesLabel.Font.MeasureString(hardGamesLabel.Text);
-			hardGamesLabel.Rect = new Rectangle(x + xSpacing, y + ySpacing*5, (int) hardGamesSize.X, (int) hardGamesSize.Y);
-			if (hardGamesLabel.Rect.Right > xMaxLabel)
-				xMaxLabel = hardGamesLabel.Rect.Right;
-			labels.Add(hardGamesLabel);
+			TextMenuButton gamesWonLabel = new TextMenuButton() {Text = Strings.Stats_GamesWon, Font = itemFont};
+			Vector2 gamesWonSize = gamesWonLabel.Font.MeasureString(totalGamesLabel.Text);
+			gamesWonLabel.Rect = new Rectangle(x, y, (int)gamesWonSize.X, (int)gamesWonSize.Y);
+			labels.Add(gamesWonLabel);
+
+			{
+				TextMenuButton info = new TextMenuButton { Text = Statistics.EasyGamesWon.ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+			{
+				TextMenuButton info = new TextMenuButton { Text = Statistics.MediumGamesWon.ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable + xTableSpacing, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+			{
+				TextMenuButton info = new TextMenuButton { Text = Statistics.HardGamesWon.ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable + xTableSpacing * 2, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+
+			y += (int)gamesWonSize.Y + ySpacing;
+
+			TextMenuButton winRateLabel = new TextMenuButton() {Text = Strings.Stats_WinRate, Font = itemFont};
+			Vector2 winRateSize = winRateLabel.Font.MeasureString(totalGamesLabel.Text);
+			winRateLabel.Rect = new Rectangle(x, y, (int)winRateSize.X, (int)winRateSize.Y);
+			labels.Add(winRateLabel);
+
+			{
+				TextMenuButton info = new TextMenuButton { Text = WinRateString(Statistics.EasyGamesWon, Statistics.EasyGames), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+			{
+				TextMenuButton info = new TextMenuButton { Text = WinRateString(Statistics.MediumGamesWon, Statistics.MediumGames), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable + xTableSpacing, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+			{
+				TextMenuButton info = new TextMenuButton { Text = WinRateString(Statistics.HardGamesWon, Statistics.HardGames), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable + xTableSpacing * 2, y, xTableSpacing, 0));
+				labels.Add(info);
+			}
+
+			y += (int)winRateSize.Y + ySpacing * 3;
 
 			TextMenuButton totalTimeLabel = new TextMenuButton() {Text = Strings.Stats_TotalTimeLabel, Font = itemFont};
 			Vector2 totalTimeSize = totalTimeLabel.Font.MeasureString(totalTimeLabel.Text);
-			totalTimeLabel.Rect = new Rectangle(x + xSpacing, y + ySpacing*6, (int) totalTimeSize.X, (int) totalTimeSize.Y);
-			if (totalTimeLabel.Rect.Right > xMaxLabel)
-				xMaxLabel = totalTimeLabel.Rect.Right;
+			totalTimeLabel.Rect = new Rectangle(x, y, (int) totalTimeSize.X, (int) totalTimeSize.Y);
 			labels.Add(totalTimeLabel);
 
 			{
-				TextMenuButton info = new TextMenuButton()
-				{
-					Text = BuildGameStatsString(Statistics.TotalGamesWon, Statistics.TotalGames),
-					Font = itemFont
-				};
-				Vector2 size = info.Font.MeasureString(info.Text);
-				info.Rect = new Rectangle(xMaxLabel + xSpacing, y + ySpacing*2, (int) size.X, (int) size.Y);
-				labels.Add(info);
-			}
-
-			{
-				TextMenuButton info = new TextMenuButton()
-				{
-					Text = BuildGameStatsString(Statistics.EasyGamesWon, Statistics.EasyGames),
-					Font = itemFont
-				};
-				Vector2 size = info.Font.MeasureString(info.Text);
-				info.Rect = new Rectangle(xMaxLabel + xSpacing, y + ySpacing*3, (int) size.X, (int) size.Y);
-				labels.Add(info);
-			}
-
-			{
-				TextMenuButton info = new TextMenuButton()
-				{
-					Text = BuildGameStatsString(Statistics.MediumGamesWon, Statistics.MediumGames),
-					Font = itemFont
-				};
-				Vector2 size = info.Font.MeasureString(info.Text);
-				info.Rect = new Rectangle(xMaxLabel + xSpacing, y + ySpacing*4, (int) size.X, (int) size.Y);
-				labels.Add(info);
-			}
-
-			{
-				TextMenuButton info = new TextMenuButton()
-				{
-					Text = BuildGameStatsString(Statistics.HardGamesWon, Statistics.HardGames),
-					Font = itemFont
-				};
-				Vector2 size = info.Font.MeasureString(info.Text);
-				info.Rect = new Rectangle(xMaxLabel + xSpacing, y + ySpacing*5, (int) size.X, (int) size.Y);
-				labels.Add(info);
-			}
-
-			{
-				TextMenuButton info = new TextMenuButton()
-				{
-					Text = TimeSpan.FromSeconds(Statistics.TotalTimePlayed).ToString(),
-					Font = itemFont
-				};
-				Vector2 size = info.Font.MeasureString(info.Text);
-				info.Rect = new Rectangle(xMaxLabel + xSpacing, y + ySpacing*6, (int) size.X, (int) size.Y);
+				TextMenuButton info = new TextMenuButton { Text = TimeSpan.FromSeconds(Statistics.TotalTimePlayed).ToString(), Font = itemFont };
+				info.CenterTextInRectangle(new Rectangle(xStartTable, y, xTableSpacing * 3, 0));
 				labels.Add(info);
 			}
 
 			resetButton = new TextMenuButton() {Text = Strings.Stats_ResetButton, Font = resetFont};
 			Vector2 resetSize = resetButton.Font.MeasureString(resetButton.Text);
-			resetButton.Rect = new Rectangle(x + xSpacing, y + ySpacing*7, (int) resetSize.X, (int) resetSize.Y);
+			resetButton.Rect = new Rectangle(viewRect.Width - (int)resetSize.X - xSpacing, viewRect.Height - (int)resetSize.Y - ySpacing, (int)resetSize.X, (int)resetSize.Y);
 			resetButton.ButtonClickDelegate = OnResetClicked;
 		}
 
-		protected string BuildGameStatsString(int won, int total)
+		protected string WinRateString(int won, int total)
 		{
-			return string.Format("{0}/{1} ({2}%)", won, total, (total == 0 ? 0 : (int) ((float) won/total*100)));
+			return string.Format("{0}%", (total == 0 ? 0 : (int) ((float) won/total*100)));
 		}
 
 		public void Update()
@@ -706,6 +743,11 @@ namespace Spider
 					{
 						Vector2 pos = new Vector2(label.Rect.X, label.Rect.Y);
 						batch.DrawString(textButton.Font, textButton.Text, pos, label.Color);
+					}
+					var customButton = label as CustomMenuButton;
+					if (customButton != null)
+					{
+						customButton.Render(batch);
 					}
 				}
 			}

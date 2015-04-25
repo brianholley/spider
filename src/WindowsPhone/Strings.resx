@@ -122,7 +122,7 @@
     <comment>About Menu Item</comment>
   </data>
   <data name="About_CopyrightInfo" xml:space="preserve">
-    <value>Copyright (c) 2011 Brian Holley</value>
+    <value>Copyright (c) 2015 Brian Holley</value>
     <comment>About - copyright info</comment>
   </data>
   <data name="About_CopyrightLabel" xml:space="preserve">
@@ -130,9 +130,7 @@
     <comment>About - label for program copyright</comment>
   </data>
   <data name="About_FontCopyrightInfo" xml:space="preserve">
-    <value>Segoe Print Copyright (c) 2011
-Microsoft Corp, Ascender Corp
-http://www.ascendercorp.com/xna.html</value>
+    <value>Segoe Print</value>
     <comment>About - font info</comment>
   </data>
   <data name="About_FontCopyrightLabel" xml:space="preserve">
@@ -230,25 +228,21 @@ try again later.</value>
     <value>Statistics</value>
     <comment>Statistics Menu Item</comment>
   </data>
-  <data name="Stats_EasyGamesLabel" xml:space="preserve">
-    <value>Easy (1 Suit) Games Won</value>
-    <comment>Statistics - label for 1 suit games won</comment>
+  <data name="Stats_TotalGames" xml:space="preserve">
+    <value>Games Played</value>
+    <comment>Statistics - label for number of games played</comment>
   </data>
-  <data name="Stats_HardGamesLabel" xml:space="preserve">
-    <value>Hard (4 Suits) Games Won</value>
-    <comment>Statistics - label for 4 suit games won</comment>
+  <data name="Stats_GamesWon" xml:space="preserve">
+    <value>Games Won</value>
+    <comment>Statistics - label for number of games won</comment>
   </data>
-  <data name="Stats_MediumGamesLabel" xml:space="preserve">
-    <value>Medium (2 Suits) Games Won</value>
-    <comment>Statistics - label for 2 suit games won</comment>
+  <data name="Stats_WinRate" xml:space="preserve">
+    <value>Win Rate</value>
+    <comment>Statistics - label for percentage of games won</comment>
   </data>
   <data name="Stats_ResetButton" xml:space="preserve">
-    <value>[Reset Statistics]</value>
-    <comment>Statistics - button to reset statisticis</comment>
-  </data>
-  <data name="Stats_TotalGamesLabel" xml:space="preserve">
-    <value>Total Games Won</value>
-    <comment>Statistics - label for total games won</comment>
+    <value>[Clear]</value>
+    <comment>Statistics - button to reset statistics</comment>
   </data>
   <data name="Stats_TotalTimeLabel" xml:space="preserve">
     <value>Total Time Played</value>
