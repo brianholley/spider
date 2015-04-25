@@ -1,0 +1,70 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="Spider.MenuPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Landscape" Orientation="Landscape"
+    mc:Ignorable="d">
+	
+	<phone:PhoneApplicationPage.Resources>
+		<Style TargetType="Button">
+			<Setter Property="BorderThickness" Value="0" />
+		</Style>
+	</phone:PhoneApplicationPage.Resources>
+
+	<Grid x:Name="LayoutRoot" Background="#FF005C00">
+		
+		<Grid x:Name="CenterPanel" Grid.Column="0" Grid.ColumnSpan="2" Margin="12,0,12,0">
+			<Image Source="Assets/BlackWidow.png"></Image>
+		</Grid>
+
+		<StackPanel Grid.Column="1" VerticalAlignment="Center">
+			<TextBlock FontSize="40" HorizontalAlignment="Center">New Game</TextBlock>
+			<Grid HorizontalAlignment="Center">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Button Grid.Column="0" BorderThickness="1" Background="#8CFFFFFF" Padding="1" Click="NewGameClickOneSuit">
+					<Button.Content>
+						<Image Source="Assets/OneSuit.png"></Image>
+					</Button.Content>
+				</Button>
+				<Button Grid.Column="1" BorderThickness="1" Background="#8CFFFFFF" Padding="1" Click="NewGameClickTwoSuit">
+					<Button.Content>
+						<Image Source="Assets/TwoSuits.png"></Image>
+					</Button.Content>
+				</Button>
+				<Button Grid.Column="2" BorderThickness="1" Background="#8CFFFFFF" Padding="1" Click="NewGameClickFourSuit">
+					<Button.Content>
+						<Image Source="Assets/FourSuits.png"></Image>
+					</Button.Content>
+				</Button>
+			</Grid>
+			<Button FontSize="40">Resume</Button>
+		</StackPanel>
+		
+		<StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<Button Grid.Column="1">Options</Button>
+				<Button Grid.Column="2">Statistics</Button>
+				<Button Grid.Column="3">About</Button>
+			</Grid>
+		</StackPanel>
+		
+    </Grid>
+
+</phone:PhoneApplicationPage>
