@@ -687,6 +687,7 @@ namespace Spider
 
 		public void FinishGame()
 		{
+			Analytics.RegisterEvent(Analytics.EventType.WinGame);
 			Animation winAnimation = new WinAnimation(_board) {OnAnimationCompleted = OnCompletedWinAnimation};
 			_currentAnimations.Add(winAnimation);
 		}

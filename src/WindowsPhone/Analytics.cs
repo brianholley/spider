@@ -19,6 +19,7 @@ namespace Spider
 		public enum EventType
 		{
 			Boot,
+			BootFinished,
 			Shutdown,
 			NewGame,
 			ResumeGame,
@@ -26,10 +27,11 @@ namespace Spider
 			ViewStatistics,
 			ResetStatistics,
 			ViewOptions,
-			ViewAbout
+			ViewAbout,
+			Purchase
 		}
 
-		public static void RegisterEvent(EventType eventType, string data = null)
+		public static void RegisterEvent(EventType eventType, int? data = null)
 		{
 			// t=event,exception
 			// ec=category
@@ -39,6 +41,11 @@ namespace Spider
 			var ev = new AnalyticsEvent();
 			ev.Args["t"] = "event";
 			ev.Args["ea"] = eventType.ToString().ToLowerInvariant();
+			if (data.HasValue)
+				ev.Args["ev"] = data.Value.ToString();
+			ev.Args["an"] = "Spider";
+			ev.Args["aid"] = "net.wavecrash.spider";
+			ev.Args["av"] = Assembly.GetExecutingAssembly().GetName().Version.ToString(4);
 			switch (eventType)
 			{
 				case EventType.Boot:
@@ -46,32 +53,50 @@ namespace Spider
 					ev.Args["av"] = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 					ev.Args["sr"] = GameStateManager.ViewRect.Width + "x" + GameStateManager.ViewRect.Height;
 					ev.Args["ul"] = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+					ev.Args["sc"] = "start";
+					ev.Args["cd"] = "App";
+					break;
+				case EventType.BootFinished:
+					ev.Args["ec"] = "session";
+					ev.Args["cd"] = "App";
 					break;
 				case EventType.Shutdown:
 					ev.Args["ec"] = "session";
+					ev.Args["sc"] = "end";
+					ev.Args["cd"] = "App";
 					break;
 				case EventType.NewGame:
 					ev.Args["ec"] = "game";
 					ev.Args["el"] = "suits";
-					ev.Args["ev"] = data;
+					ev.Args["cd"] = "Menu";
 					break;
 				case EventType.ResumeGame:
 					ev.Args["ec"] = "game";
+					ev.Args["cd"] = "Menu";
 					break;
 				case EventType.WinGame:
 					ev.Args["ec"] = "game";
+					ev.Args["cd"] = "Game";
 					break;
 				case EventType.ViewStatistics:
 					ev.Args["ec"] = "extras";
+					ev.Args["cd"] = "Stats";
 					break;
 				case EventType.ResetStatistics:
 					ev.Args["ec"] = "extras";
+					ev.Args["cd"] = "Stats";
 					break;
 				case EventType.ViewOptions:
 					ev.Args["ec"] = "extras";
+					ev.Args["cd"] = "Options";
 					break;
 				case EventType.ViewAbout:
 					ev.Args["ec"] = "extras";
+					ev.Args["cd"] = "About";
+					break;
+				case EventType.Purchase:
+					ev.Args["ec"] = "purchase";
+					ev.Args["cd"] = "Menu";
 					break;
 			}
 
@@ -102,7 +127,7 @@ namespace Spider
 
 		static Analytics()
 		{
-			_clientGuid = new Guid();
+			_clientGuid = Guid.NewGuid();
 			_eventQueue = new Queue<AnalyticsEvent>();
 			
 			Load();
@@ -162,6 +187,7 @@ namespace Spider
 
 			var uri = new Uri("http://www.google-analytics.com/collect");
 			var request = WebRequest.CreateHttp(new Uri(uri, "?" + string.Join("&", args.Select(p => p.Key + "=" + p.Value))));
+			request.Method = "POST";
 
 			try
 			{

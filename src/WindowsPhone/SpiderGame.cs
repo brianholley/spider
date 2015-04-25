@@ -44,7 +44,7 @@ namespace Spider
 
 			base.Initialize();
 
-			Analytics.RegisterEvent(Analytics.EventType.Boot, "");
+			Analytics.RegisterEvent(Analytics.EventType.Boot);
 		}
 
 		/// <summary>
@@ -102,10 +102,8 @@ namespace Spider
 				}
 			}
 
-#if DEBUG
-			//Microsoft.Xna.Framework.GamerServices.Guide.SimulateTrialMode = true;
-#endif
 			GameStateManager.RefreshTrialStatus();
+			Analytics.RegisterEvent(Analytics.EventType.BootFinished, GameStateManager.IsTrial ? 1 : 0);
 		}
 
 		/// <summary>

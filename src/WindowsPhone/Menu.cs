@@ -365,21 +365,26 @@ namespace Spider
 				trialWindow = new TrialWindow(viewRect, Strings.DisabledInTrial);
 				return;
 			}
+
+			Analytics.RegisterEvent(Analytics.EventType.NewGame, Board.SuitCount);
 			GameStateManager.ChangeGameState(GameState.Playing);
 		}
 
 		private void OnResumeClicked(MenuButton button)
 		{
+			Analytics.RegisterEvent(Analytics.EventType.ResumeGame);
 			GameStateManager.ChangeGameState(GameState.Playing, true /*resume*/);
 		}
 
 		private void OnOptionsClicked(MenuButton button)
 		{
+			Analytics.RegisterEvent(Analytics.EventType.ViewOptions);
 			activeSubView = new OptionsView(viewRect);
 		}
 
 		private void OnStatisticsClicked(MenuButton button)
 		{
+			Analytics.RegisterEvent(Analytics.EventType.ViewStatistics);
 			if (!GameStateManager.IsTrial)
 				activeSubView = new StatisticsView(viewRect);
 			else
@@ -388,6 +393,7 @@ namespace Spider
 
 		private void OnAboutClicked(MenuButton button)
 		{
+			Analytics.RegisterEvent(Analytics.EventType.ViewAbout);
 			activeSubView = new AboutView(viewRect);
 		}
 
@@ -717,6 +723,7 @@ namespace Spider
 			Statistics.Reset();
 			Statistics.Save();
 			InitControls();
+			Analytics.RegisterEvent(Analytics.EventType.ResetStatistics);
 		}
 
 		public void OnClose()
