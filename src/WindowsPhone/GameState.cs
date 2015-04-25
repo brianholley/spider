@@ -57,7 +57,7 @@ namespace Spider
 			IsTrial = Windows.ApplicationModel.Store.CurrentApp.LicenseInformation.IsTrial;
 #if DEBUG
 			// Simulate trial mode
-			IsTrial = true;
+			//IsTrial = true;
 #endif
 		}
 	}
