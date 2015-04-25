@@ -33,6 +33,11 @@ namespace Spider
 
 		public static void RegisterEvent(EventType eventType, int? data = null)
 		{
+			RegisterEventInternal(eventType, data);
+		}
+
+		private static Task RegisterEventInternal(EventType eventType, int? data = null)
+		{
 			// t=event,exception
 			// ec=category
 			// ea=action
@@ -100,7 +105,7 @@ namespace Spider
 					break;
 			}
 
-			Task.Run(() =>
+			return Task.Run(() =>
 			{
 				if (!_running || !SendAnalytics(ev).Wait(30000))
 				{
@@ -138,13 +143,12 @@ namespace Spider
 
 		public static void Shutdown()
 		{
+			var shutdownEvent = RegisterEventInternal(EventType.Shutdown);
+			shutdownEvent.Wait(2000); // Wait to try to send this event for 2s
+
 			lock (_eventQueue)
 			{
 				_running = false;
-			}
-			RegisterEvent(EventType.Shutdown);
-			lock (_eventQueue)
-			{
 				Save();
 			}
 		}
@@ -267,6 +271,7 @@ namespace Spider
 		#endregion
 	}
 
+	[DataContract]
 	class AnalyticsEvent
 	{
 		public AnalyticsEvent()
@@ -274,6 +279,7 @@ namespace Spider
 			Args = new Dictionary<string, string>();
 		}
 
+		[DataMember]
 		public Dictionary<string, string> Args { get; private set; } 
 	}
 }
