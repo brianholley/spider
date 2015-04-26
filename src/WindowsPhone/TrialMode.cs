@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Spider.Resources;
 
 namespace Spider
 {

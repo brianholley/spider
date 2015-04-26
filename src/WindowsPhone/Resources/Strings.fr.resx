@@ -117,8 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ResourceLanguage" xml:space="preserve">
+    <value>fr</value>
+    <comment>Language for this resource file</comment>
+  </data>
   <data name="About" xml:space="preserve">
-    <value>About</value>
+    <value>À propos</value>
     <comment>About Menu Item</comment>
   </data>
   <data name="About_CopyrightInfo" xml:space="preserve">
@@ -126,27 +130,27 @@
     <comment>About - copyright info</comment>
   </data>
   <data name="About_CopyrightLabel" xml:space="preserve">
-    <value>Program/Graphics</value>
+    <value>Programme/graphiques</value>
     <comment>About - label for program copyright</comment>
   </data>
   <data name="About_FontCopyrightInfo" xml:space="preserve">
-    <value>Segoe Print</value>
+    <value>Impression Segoe</value>
     <comment>About - font info</comment>
   </data>
   <data name="About_FontCopyrightLabel" xml:space="preserve">
-    <value>Font</value>
+    <value>Police</value>
     <comment>About - label for font copyright</comment>
   </data>
   <data name="About_Title" xml:space="preserve">
-    <value>About Spider</value>
+    <value>À propos de Spider</value>
     <comment>About - title</comment>
   </data>
   <data name="About_TrialModeLabel" xml:space="preserve">
-    <value>Trial Mode</value>
+    <value>Mode d'évaluation</value>
     <comment>About - label for trial mode</comment>
   </data>
   <data name="About_UpgradeLabel" xml:space="preserve">
-    <value>Tap here to upgrade to the full version of Spider</value>
+    <value>Cliquez ici pour mettre à niveau vers la version complète de robot</value>
     <comment>About - application upgrade/purchase message</comment>
   </data>
   <data name="About_VersionLabel" xml:space="preserve">
@@ -158,62 +162,44 @@
     <comment>Application Name</comment>
   </data>
   <data name="DisabledInTrial" xml:space="preserve">
-    <value>This feature requires the
-full version of Spider.
-Click here to go
-to the Marketplace.</value>
+    <value>Cette fonctionnalité nécessite la version complète d'araignée.
+Cliquez ici pour accéder à l'outil statistique.</value>
     <comment>Feature disabled in trial message.</comment>
   </data>
   <data name="EmptyStacksDealError" xml:space="preserve">
-    <value>Cannot deal a new row while there are empty stacks</value>
+    <value>Impossible de distribuer une nouvelle rangée alors qu'il existe des piles vides</value>
     <comment>Error when the user tries to deal when there are empty stacks</comment>
   </data>
   <data name="Loading" xml:space="preserve">
-    <value>Loading Spider</value>
+    <value>Robot de chargement</value>
     <comment>Content loading message</comment>
   </data>
   <data name="Menu_TrialBanner" xml:space="preserve">
-    <value>Trial Version</value>
+    <value>Version d'évaluation</value>
     <comment>Menu - label for the trial banner in the corner</comment>
   </data>
   <data name="Menu_TrialBannerNav" xml:space="preserve">
-    <value>Click here to go to the
-Marketplace to upgrade
-to the full version of Spider.</value>
+    <value>Cliquez ici pour atteindre le marché mise à niveau vers la version complète d'araignée.</value>
     <comment>Menu - trial window message when clicking on the trial banner</comment>
   </data>
   <data name="Menu_TrialNavFailed" xml:space="preserve">
-    <value>Cannot currently reach
-the Marketplace.  Please
-try again later.</value>
+    <value>Impossible d'atteindre actuellement sur le marché.  Veuillez réessayer ultérieurement.</value>
     <comment>Menu - message when showing the Marketplace fails</comment>
   </data>
   <data name="NewGame" xml:space="preserve">
-    <value>New Game</value>
+    <value>Nouvelle partie</value>
     <comment>New Game Menu Item</comment>
   </data>
   <data name="Options" xml:space="preserve">
     <value>Options</value>
     <comment>Options Menu Item</comment>
   </data>
-  <data name="Options_DarkTheme" xml:space="preserve">
-    <value>Dark</value>
-    <comment>Dark theme name</comment>
-  </data>
   <data name="Options_DeckColorLabel" xml:space="preserve">
-    <value>Deck</value>
+    <value>Pont</value>
     <comment>Options - label for deck backing</comment>
   </data>
-  <data name="Options_ModernTheme" xml:space="preserve">
-    <value>Modern</value>
-    <comment>Modern theme name</comment>
-  </data>
-  <data name="Options_OriginalTheme" xml:space="preserve">
-    <value>Original</value>
-    <comment>Original theme name</comment>
-  </data>
   <data name="Options_ThemeLabel" xml:space="preserve">
-    <value>Theme</value>
+    <value>Thème</value>
     <comment>Options - label for theme pack</comment>
   </data>
   <data name="Resume" xml:space="preserve">
@@ -221,31 +207,39 @@ try again later.</value>
     <comment>Resume Menu Item</comment>
   </data>
   <data name="Resuming" xml:space="preserve">
-    <value>Resuming Spider</value>
+    <value>Reprise de robot</value>
     <comment>Content loading message when app is resuming</comment>
   </data>
   <data name="Statistics" xml:space="preserve">
-    <value>Statistics</value>
+    <value>Statistiques</value>
     <comment>Statistics Menu Item</comment>
   </data>
   <data name="Stats_TotalGames" xml:space="preserve">
-    <value>Games Played</value>
+    <value>Parties jouées</value>
     <comment>Statistics - label for number of games played</comment>
   </data>
   <data name="Stats_GamesWon" xml:space="preserve">
-    <value>Games Won</value>
+    <value>Parties gagnées</value>
     <comment>Statistics - label for number of games won</comment>
   </data>
   <data name="Stats_WinRate" xml:space="preserve">
-    <value>Win Rate</value>
+    <value>Taux de conclusion</value>
     <comment>Statistics - label for percentage of games won</comment>
   </data>
   <data name="Stats_ResetButton" xml:space="preserve">
-    <value>[Clear]</value>
+    <value>[Supprimer]</value>
     <comment>Statistics - button to reset statistics</comment>
   </data>
   <data name="Stats_TotalTimeLabel" xml:space="preserve">
-    <value>Total Time Played</value>
+    <value>Temps total écoulé</value>
     <comment>Statistics - label for total time played</comment>
+  </data>
+  <data name="Game_WinMessage" xml:space="preserve">
+    <value>Vous avez gagné !</value>
+    <comment>Game - message when the user has won the game</comment>
+  </data>
+  <data name="Game_Again" xml:space="preserve">
+    <value>Cliquez sur pour commencer une nouvelle partie</value>
+    <comment>Game - message to the user to tap the screen to start a new game</comment>
   </data>
 </root>

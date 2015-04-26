@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsPhone", "WindowsPhone\WindowsPhone.csproj", "{F7D322C6-170D-4041-A9D7-3D80E8C8C300}"
 EndProject
@@ -95,9 +95,9 @@ Global
 		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|ARM.ActiveCfg = Debug|ARM
 		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|ARM.Build.0 = Debug|ARM
 		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|ARM.Deploy.0 = Debug|ARM
-		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
+		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Mixed Platforms.ActiveCfg = Debug|ARM
+		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Mixed Platforms.Build.0 = Debug|ARM
+		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Mixed Platforms.Deploy.0 = Debug|ARM
 		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Win32.ActiveCfg = Debug|x86
 		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Win32.Build.0 = Debug|x86
 		{F7D322C6-170D-4041-A9D7-3D80E8C8C300}.Debug|Win32.Deploy.0 = Debug|x86

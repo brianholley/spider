@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Spider {
+namespace Spider.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Spider {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Spider.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Spider.Resources.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -151,10 +151,7 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This feature requires the
-        ///full version of Spider.
-        ///Click here to go
-        ///to the Marketplace..
+        ///   Looks up a localized string similar to This feature requires the full version of Spider. Click here to go to the Marketplace..
         /// </summary>
         internal static string DisabledInTrial {
             get {
@@ -168,6 +165,24 @@ namespace Spider {
         internal static string EmptyStacksDealError {
             get {
                 return ResourceManager.GetString("EmptyStacksDealError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tap to start a new game.
+        /// </summary>
+        internal static string Game_Again {
+            get {
+                return ResourceManager.GetString("Game_Again", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You Win!.
+        /// </summary>
+        internal static string Game_WinMessage {
+            get {
+                return ResourceManager.GetString("Game_WinMessage", resourceCulture);
             }
         }
         
@@ -190,9 +205,7 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click here to go to the
-        ///Marketplace to upgrade
-        ///to the full version of Spider..
+        ///   Looks up a localized string similar to Click here to go to the Marketplace to upgrade to the full version of Spider..
         /// </summary>
         internal static string Menu_TrialBannerNav {
             get {
@@ -201,9 +214,7 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot currently reach
-        ///the Marketplace.  Please
-        ///try again later..
+        ///   Looks up a localized string similar to Cannot currently reach the Marketplace. Please try again later..
         /// </summary>
         internal static string Menu_TrialNavFailed {
             get {
@@ -230,15 +241,6 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dark.
-        /// </summary>
-        internal static string Options_DarkTheme {
-            get {
-                return ResourceManager.GetString("Options_DarkTheme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Deck.
         /// </summary>
         internal static string Options_DeckColorLabel {
@@ -248,29 +250,20 @@ namespace Spider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Modern.
-        /// </summary>
-        internal static string Options_ModernTheme {
-            get {
-                return ResourceManager.GetString("Options_ModernTheme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Original.
-        /// </summary>
-        internal static string Options_OriginalTheme {
-            get {
-                return ResourceManager.GetString("Options_OriginalTheme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Theme.
         /// </summary>
         internal static string Options_ThemeLabel {
             get {
                 return ResourceManager.GetString("Options_ThemeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to en-us.
+        /// </summary>
+        internal static string ResourceLanguage {
+            get {
+                return ResourceManager.GetString("ResourceLanguage", resourceCulture);
             }
         }
         

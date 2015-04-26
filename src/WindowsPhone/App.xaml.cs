@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Resources;
+using System.Threading;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Navigation;
@@ -185,6 +187,13 @@ namespace Spider
         {
             try
             {
+#if DEBUG
+				//var debugCulture = new CultureInfo("pt");
+				//Thread.CurrentThread.CurrentCulture = debugCulture;
+				//Thread.CurrentThread.CurrentUICulture = debugCulture;
+				//Strings.Culture = debugCulture;
+#endif
+
                 // Set the font to match the display language defined by the
                 // ResourceLanguage resource string for each supported language.
                 //
@@ -193,16 +202,7 @@ namespace Spider
                 //
                 // If a compiler error is hit then ResourceLanguage is missing from
                 // the resource file.
-                RootFrame.Language = XmlLanguage.GetLanguage(AppResources.ResourceLanguage);
-
-                // Set the FlowDirection of all elements under the root frame based
-                // on the ResourceFlowDirection resource string for each
-                // supported language.
-                //
-                // If a compiler error is hit then ResourceFlowDirection is missing from
-                // the resource file.
-                FlowDirection flow = (FlowDirection)Enum.Parse(typeof(FlowDirection), AppResources.ResourceFlowDirection);
-                RootFrame.FlowDirection = flow;
+                RootFrame.Language = XmlLanguage.GetLanguage(Strings.ResourceLanguage);
             }
             catch
             {

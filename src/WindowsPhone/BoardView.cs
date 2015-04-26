@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Spider.Resources;
 
 namespace Spider
 {
@@ -301,20 +302,20 @@ namespace Spider
 
 			if (_board.IsBoardClear())
 			{
-				var winTextSize = CardResources.WinFont.MeasureString("You Win!");
+				var winTextSize = CardResources.WinFont.MeasureString(Strings.Game_WinMessage);
 				var winPos = new Vector2(_viewRect.Width/2.0f - winTextSize.X/2, _viewRect.Height/2.0f - winTextSize.Y/2);
 
 				batch.Begin();
-				batch.DrawString(CardResources.WinFont, "You Win!", winPos, Color.Black);
+				batch.DrawString(CardResources.WinFont, Strings.Game_WinMessage, winPos, Color.Black);
 				batch.End();
 
 				if (_completed)
 				{
-					var newGameSize = CardResources.AgainFont.MeasureString("Tap to start a new game");
+					var newGameSize = CardResources.AgainFont.MeasureString(Strings.Game_Again);
 					var pos = new Vector2(_viewRect.Width/2.0f - newGameSize.X/2, _viewRect.Height/2.0f - newGameSize.Y/2 + winTextSize.Y);
 
 					batch.Begin();
-					batch.DrawString(CardResources.AgainFont, "Tap to start a new game", pos, Color.Black);
+					batch.DrawString(CardResources.AgainFont, Strings.Game_Again, pos, Color.Black);
 					batch.End();
 				}
 			}

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Content;
 using System.Threading;
 using Microsoft.Xna.Framework.Input;
+using Spider.Resources;
 
 namespace Spider
 {

@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="fr" original="Strings.resx" tool-id="MultilingualAppToolkit" product-name="WindowsPhone" product-version="2.0.0426.0" build-num="0426">
+    <header>
+      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="3.1.1250.0" tool-company="Microsoft" />
+    </header>
+    <body>
+      <group id="Resx">
+        <trans-unit id="Resx/About" translate="yes" xml:space="preserve">
+          <source>About</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">À propos</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About Menu Item</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_CopyrightInfo" translate="yes" xml:space="preserve">
+          <source>Copyright (c) 2015 Brian Holley</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Copyright (c) 2015 Brian Holley</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - copyright info</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_CopyrightLabel" translate="yes" xml:space="preserve">
+          <source>Program/Graphics</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Programme/graphiques</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - label for program copyright</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_FontCopyrightInfo" translate="yes" xml:space="preserve">
+          <source>Segoe Print</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Impression Segoe</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - font info</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_FontCopyrightLabel" translate="yes" xml:space="preserve">
+          <source>Font</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Police</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - label for font copyright</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_Title" translate="yes" xml:space="preserve">
+          <source>About Spider</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">À propos de Spider</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - title</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_TrialModeLabel" translate="yes" xml:space="preserve">
+          <source>Trial Mode</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Mode d'évaluation</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - label for trial mode</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_UpgradeLabel" translate="yes" xml:space="preserve">
+          <source>Tap here to upgrade to the full version of Spider</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Cliquez ici pour mettre à niveau vers la version complète de robot</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - application upgrade/purchase message</note>
+          </trans-unit>
+        <trans-unit id="Resx/About_VersionLabel" translate="yes" xml:space="preserve">
+          <source>Version</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Version</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">About - label for app version</note>
+          </trans-unit>
+        <trans-unit id="Resx/AppName" translate="yes" xml:space="preserve">
+          <source>Spider</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Spider</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Application Name</note>
+          </trans-unit>
+        <trans-unit id="Resx/DisabledInTrial" translate="yes" xml:space="preserve">
+          <source>This feature requires the full version of Spider. Click here to go to the Marketplace.</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Cette fonctionnalité nécessite la version complète d'araignée.
+Cliquez ici pour accéder à l'outil statistique.</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Feature disabled in trial message.</note><note from="MultilingualUpdate" priority="2" annotates="source">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          </trans-unit>
+        <trans-unit id="Resx/EmptyStacksDealError" translate="yes" xml:space="preserve">
+          <source>Cannot deal a new row while there are empty stacks</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Impossible de distribuer une nouvelle rangée alors qu'il existe des piles vides</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Error when the user tries to deal when there are empty stacks</note>
+          </trans-unit>
+        <trans-unit id="Resx/Loading" translate="yes" xml:space="preserve">
+          <source>Loading Spider</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Robot de chargement</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Content loading message</note>
+          </trans-unit>
+        <trans-unit id="Resx/Menu_TrialBanner" translate="yes" xml:space="preserve">
+          <source>Trial Version</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Version d'évaluation</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Menu - label for the trial banner in the corner</note>
+          </trans-unit>
+        <trans-unit id="Resx/Menu_TrialBannerNav" translate="yes" xml:space="preserve">
+          <source>Click here to go to the Marketplace to upgrade to the full version of Spider.</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Cliquez ici pour atteindre le marché mise à niveau vers la version complète d'araignée.</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Menu - trial window message when clicking on the trial banner</note><note from="MultilingualUpdate" priority="2" annotates="source">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          </trans-unit>
+        <trans-unit id="Resx/Menu_TrialNavFailed" translate="yes" xml:space="preserve">
+          <source>Cannot currently reach the Marketplace. Please try again later.</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Impossible d'atteindre actuellement sur le marché.  Veuillez réessayer ultérieurement.</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Menu - message when showing the Marketplace fails</note><note from="MultilingualUpdate" priority="2" annotates="source">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          </trans-unit>
+        <trans-unit id="Resx/NewGame" translate="yes" xml:space="preserve">
+          <source>New Game</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Nouvelle partie</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">New Game Menu Item</note>
+          </trans-unit>
+        <trans-unit id="Resx/Options" translate="yes" xml:space="preserve">
+          <source>Options</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Options</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Options Menu Item</note>
+          </trans-unit>
+        <trans-unit id="Resx/Options_DeckColorLabel" translate="yes" xml:space="preserve">
+          <source>Deck</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Pont</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Options - label for deck backing</note>
+          </trans-unit>
+        <trans-unit id="Resx/Options_ThemeLabel" translate="yes" xml:space="preserve">
+          <source>Theme</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Thème</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Options - label for theme pack</note>
+          </trans-unit>
+        <trans-unit id="Resx/Resume" translate="yes" xml:space="preserve">
+          <source>Resume</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Resume</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Resume Menu Item</note>
+          </trans-unit>
+        <trans-unit id="Resx/Resuming" translate="yes" xml:space="preserve">
+          <source>Resuming Spider</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Reprise de robot</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Content loading message when app is resuming</note>
+          </trans-unit>
+        <trans-unit id="Resx/Statistics" translate="yes" xml:space="preserve">
+          <source>Statistics</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Statistiques</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Statistics Menu Item</note>
+          </trans-unit>
+        <trans-unit id="Resx/Stats_TotalGames" translate="yes" xml:space="preserve">
+          <source>Games Played</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Parties jouées</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Statistics - label for number of games played</note>
+          </trans-unit>
+        <trans-unit id="Resx/Stats_GamesWon" translate="yes" xml:space="preserve">
+          <source>Games Won</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Parties gagnées</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Statistics - label for number of games won</note>
+          </trans-unit>
+        <trans-unit id="Resx/Stats_WinRate" translate="yes" xml:space="preserve">
+          <source>Win Rate</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Taux de conclusion</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Statistics - label for percentage of games won</note>
+          </trans-unit>
+        <trans-unit id="Resx/Stats_ResetButton" translate="yes" xml:space="preserve">
+          <source>[Clear]</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">[Supprimer]</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Statistics - button to reset statistics</note>
+          </trans-unit>
+        <trans-unit id="Resx/Stats_TotalTimeLabel" translate="yes" xml:space="preserve">
+          <source>Total Time Played</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Temps total écoulé</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Statistics - label for total time played</note>
+          </trans-unit>
+        <trans-unit id="Resx/Game_WinMessage" translate="yes" xml:space="preserve">
+          <source>You Win!</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Vous avez gagné !</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Game - message when the user has won the game</note>
+          </trans-unit>
+        <trans-unit id="Resx/Game_Again" translate="yes" xml:space="preserve">
+          <source>Tap to start a new game</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Cliquez sur pour commencer une nouvelle partie</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Game - message to the user to tap the screen to start a new game</note>
+          </trans-unit>
+        <trans-unit id="Resx/ResourceLanguage" translate="yes" xml:space="preserve">
+          <source>en-us</source>
+          <target state="translated">fr</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Language for this resource file</note>
+          </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

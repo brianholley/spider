@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{d2f631cc-6a98-4494-a4b8-93a5b188e4de}" Title="Spider" RuntimeType="Silverlight" Version="2.0.0308.0" Genre="apps.normal" Author="Wavecrash Software" Description="Sample description" Publisher="WindowsPhone" PublisherID="{0df4bf76-7146-42eb-ba7c-83daa7249a23}">
+  <Languages xmlns="">
+    <Language code="de" />
+    <Language code="es" />
+    <Language code="fr" />
+    <Language code="it" />
+    <Language code="pt" />
+    <Language code="en" />
+  </Languages>
+  <App xmlns="" ProductID="{d2f631cc-6a98-4494-a4b8-93a5b188e4de}" Title="Spider" RuntimeType="Silverlight" Version="2.0.0426.0" Genre="apps.normal" Author="Wavecrash Software" Description="Sample description" Publisher="WindowsPhone" PublisherID="{0df4bf76-7146-42eb-ba7c-83daa7249a23}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />

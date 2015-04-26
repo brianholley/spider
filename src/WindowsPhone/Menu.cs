@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Reflection;
+using System.Text;
+using Spider.Resources;
 
 namespace Spider
 {
@@ -805,17 +808,17 @@ namespace Spider
 			themeTextures = new List<ThemeTexture>();
 			foreach (var themeInfo in themePacks)
 			{
-				var front = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\Card");
+				var front = content.Load<Texture2D>(@"ThemePacks\" + themeInfo + @"\Card\Card");
 				callback();
-				var value = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\A");
+				var value = content.Load<Texture2D>(@"ThemePacks\" + themeInfo + @"\Card\A");
 				callback();
-				var suit = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\Spade");
+				var suit = content.Load<Texture2D>(@"ThemePacks\" + themeInfo + @"\Card\Spade");
 				callback();
-				var back = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\CardBack_White");
+				var back = content.Load<Texture2D>(@"ThemePacks\" + themeInfo + @"\Card\CardBack_White");
 				callback();
-				var center = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\Highlight_Center");
+				var center = content.Load<Texture2D>(@"ThemePacks\" + themeInfo + @"\Card\Highlight_Center");
 				callback();
-				var end = content.Load<Texture2D>(@"ThemePacks\" + themeInfo.Item1 + @"\Card\Highlight_End");
+				var end = content.Load<Texture2D>(@"ThemePacks\" + themeInfo + @"\Card\Highlight_End");
 				callback();
 				themeTextures.Add(new ThemeTexture { Front = front, Value = value, Suit = suit, Back = back, HighlightCenter = center, HighlightEnd = end });
 			}
@@ -824,12 +827,7 @@ namespace Spider
 		private static Color[] deckColors = new Color[]
 		{Color.CornflowerBlue, Color.Crimson, Color.LightSlateGray, Color.Gold, Color.MediumPurple, Color.Silver};
 
-		private static Tuple<string, string>[] themePacks = new Tuple<string, string>[]
-		{
-			new Tuple<string, string>("Original", Strings.Options_OriginalTheme),
-			new Tuple<string, string>("Modern", Strings.Options_ModernTheme),
-			new Tuple<string, string>("Dark", Strings.Options_DarkTheme),
-		};
+		private static string[] themePacks = { "Original", "Modern", "Dark" };
 
 		private Rectangle viewRect;
 		private List<MenuButton> labels = new List<MenuButton>();
@@ -857,7 +855,7 @@ namespace Spider
 
 			for (int i = 0; i < themePacks.Length; i++)
 			{
-				if (themePacks[i].Item1 == Options.ThemePack)
+				if (themePacks[i] == Options.ThemePack)
 				{
 					selectedTheme = i;
 					break;
@@ -1079,7 +1077,7 @@ namespace Spider
 				if (button == themePackButtons[i])
 					selectedTheme = i;
 			}
-			Options.ThemePack = themePacks[selectedTheme].Item1;
+			Options.ThemePack = themePacks[selectedTheme];
 			currentCardBack = themeTextures[selectedTheme].Back;
 		}
 
@@ -1179,18 +1177,18 @@ namespace Spider
 
 			if (GameStateManager.IsTrial)
 			{
-				TextMenuButton trialLabel = new TextMenuButton() {Text = Strings.About_TrialModeLabel, Font = itemFont};
-				Vector2 trialSize = trialLabel.Font.MeasureString(trialLabel.Text);
-				trialLabel.Rect = new Rectangle((viewRect.Width - (int) trialSize.X)/2, y + ySpacing*8, (int) trialSize.X,
-					trialLabel.Font.LineSpacing);
-				labels.Add(trialLabel);
-
-				TextMenuButton upgradeLabel = new TextMenuButton() {Text = Strings.About_UpgradeLabel, Font = itemFont};
+				TextMenuButton upgradeLabel = new TextMenuButton() {Text = MessageWindow.BreakStringIntoLines(Strings.About_UpgradeLabel, viewRect.Width, itemFont), Font = itemFont};
 				Vector2 upgradeSize = upgradeLabel.Font.MeasureString(upgradeLabel.Text);
-				upgradeLabel.Rect = new Rectangle((viewRect.Width - (int) upgradeSize.X)/2, y + ySpacing*9, (int) upgradeSize.X,
+				upgradeLabel.Rect = new Rectangle((viewRect.Width - (int) upgradeSize.X)/2, viewRect.Height - (int)upgradeSize.Y, (int) upgradeSize.X,
 					upgradeLabel.Font.LineSpacing);
 				upgradeLabel.ButtonClickDelegate = OnUpgradeClicked;
 				labels.Add(upgradeLabel);
+
+				TextMenuButton trialLabel = new TextMenuButton() {Text = Strings.About_TrialModeLabel, Font = itemFont};
+				Vector2 trialSize = trialLabel.Font.MeasureString(trialLabel.Text);
+				trialLabel.Rect = new Rectangle((viewRect.Width - (int) trialSize.X)/2, upgradeLabel.Rect.Y - (int)trialSize.Y, (int) trialSize.X,
+					trialLabel.Font.LineSpacing);
+				labels.Add(trialLabel);
 			}
 		}
 
@@ -1306,7 +1304,7 @@ namespace Spider
 
 		protected void SetText(string text)
 		{
-			windowText = text;
+			windowText = BreakStringIntoLines(text, (int) (viewRect.Width*0.75), font);
 
 			Vector2 textSize = font.MeasureString(windowText);
 			textPos = new Vector2((viewRect.Width - textSize.X)/2, (viewRect.Height - textSize.Y)/2);
@@ -1318,6 +1316,22 @@ namespace Spider
 				(int) textPos.Y - yPadding,
 				(int) textSize.X + xPadding*2,
 				(int) textSize.Y + yPadding*2);
+		}
+
+		public static string BreakStringIntoLines(string text, int maxWidth, SpriteFont font)
+		{
+			var textLines = new List<string>();
+			Vector2 size = font.MeasureString(text);
+			int lines = (int)(size.X / maxWidth) + 1;
+			while (lines > 1)
+			{
+				int index = text.LastIndexOf(' ', text.Length / lines);
+				textLines.Add(text.Substring(0, index));
+				text = text.Substring(index);
+				lines--;
+			}
+			textLines.Add(text);
+			return string.Join("\n", textLines);
 		}
 
 		public virtual bool Update()
@@ -1345,7 +1359,7 @@ namespace Spider
 
 			batch.Draw(CardResources.BlankTex, viewRect, overlayColor);
 			batch.Draw(backgroundTex, windowRect, Color.White);
-			batch.DrawString(font, windowText, textPos, Color.White);
+			batch.DrawString(font, string.Join("\n", windowText), textPos, Color.White);
 
 			batch.End();
 		}
