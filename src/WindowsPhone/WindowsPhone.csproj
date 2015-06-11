@@ -18,7 +18,7 @@
     <SupportedCultures>de;es;fr;it;pt</SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>WindowsPhone_$(Configuration)_$(Platform).xap</XapFilename>
+    <XapFilename>Spider.WP.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Spider.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
