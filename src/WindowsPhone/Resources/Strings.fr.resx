@@ -203,7 +203,7 @@ Cliquez ici pour accéder à l'outil statistique.</value>
     <comment>Options - label for theme pack</comment>
   </data>
   <data name="Resume" xml:space="preserve">
-    <value>Resume</value>
+    <value>Reprendre</value>
     <comment>Resume Menu Item</comment>
   </data>
   <data name="Resuming" xml:space="preserve">

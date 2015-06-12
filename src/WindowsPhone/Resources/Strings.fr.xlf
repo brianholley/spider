@@ -60,7 +60,8 @@
           <source>This feature requires the full version of Spider. Click here to go to the Marketplace.</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Cette fonctionnalité nécessite la version complète d'araignée.
 Cliquez ici pour accéder à l'outil statistique.</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Feature disabled in trial message.</note><note from="MultilingualUpdate" priority="2" annotates="source">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Feature disabled in trial message.</note>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
           </trans-unit>
         <trans-unit id="Resx/EmptyStacksDealError" translate="yes" xml:space="preserve">
           <source>Cannot deal a new row while there are empty stacks</source>
@@ -80,12 +81,14 @@ Cliquez ici pour accéder à l'outil statistique.</target>
         <trans-unit id="Resx/Menu_TrialBannerNav" translate="yes" xml:space="preserve">
           <source>Click here to go to the Marketplace to upgrade to the full version of Spider.</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Cliquez ici pour atteindre le marché mise à niveau vers la version complète d'araignée.</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Menu - trial window message when clicking on the trial banner</note><note from="MultilingualUpdate" priority="2" annotates="source">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Menu - trial window message when clicking on the trial banner</note>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
           </trans-unit>
         <trans-unit id="Resx/Menu_TrialNavFailed" translate="yes" xml:space="preserve">
           <source>Cannot currently reach the Marketplace. Please try again later.</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Impossible d'atteindre actuellement sur le marché.  Veuillez réessayer ultérieurement.</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Menu - message when showing the Marketplace fails</note><note from="MultilingualUpdate" priority="2" annotates="source">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Menu - message when showing the Marketplace fails</note>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
           </trans-unit>
         <trans-unit id="Resx/NewGame" translate="yes" xml:space="preserve">
           <source>New Game</source>
@@ -109,7 +112,7 @@ Cliquez ici pour accéder à l'outil statistique.</target>
           </trans-unit>
         <trans-unit id="Resx/Resume" translate="yes" xml:space="preserve">
           <source>Resume</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Resume</target>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Reprendre</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Resume Menu Item</note>
           </trans-unit>
         <trans-unit id="Resx/Resuming" translate="yes" xml:space="preserve">
